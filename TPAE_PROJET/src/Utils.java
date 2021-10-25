@@ -32,9 +32,9 @@ public class Utils {
 	}
 
 	////// converters
-	static byte[] getBytes(int int32bits) { // = encode_entier TME 1
-		ByteBuffer intConvertedToBytes = ByteBuffer.allocate(4);
-		intConvertedToBytes.putInt(int32bits);
+	static byte[] getBytes(int int16bits) { // = encode_entier TME 1
+		ByteBuffer intConvertedToBytes = ByteBuffer.allocate(2);
+		intConvertedToBytes.putShort((short)int16bits);
 		return intConvertedToBytes.array();
 	}
 
