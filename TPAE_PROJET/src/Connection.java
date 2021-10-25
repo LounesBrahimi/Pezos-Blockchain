@@ -1,21 +1,17 @@
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.Reader;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
+import org.bouncycastle.crypto.Signer;
+import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
+import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
+import org.bouncycastle.crypto.signers.Ed25519Signer;
 
 public class Connection {
 	Socket socket;
@@ -41,7 +37,7 @@ public class Connection {
 	bufferedreader.wait();
 	String fromServer = bufferedreader.readLine(); */
 
-	public Connection(String hostname, int port, String pubkeyString) throws UnknownHostException, IOException, InterruptedException, DecoderException {
+	public Connection(String hostname, int port, String sk, String pk) throws UnknownHostException, IOException, InterruptedException, DecoderException {
     	
     	try (Socket socket = new Socket(hostname, port)) {// ensures that each resource is closed at the end ?
     		this.socket = socket;
@@ -52,13 +48,39 @@ public class Connection {
     		byte[] seed = new byte[24];
     		this.in.read(seed, 0, 24);
     		System.out.println("Seed received: " + new String(Hex.encodeHex(seed))); 
-
+    		byte[] myseed = Hex.decodeHex("12230025a6118122e9eac8785c74193819441fe57fec4845".toCharArray());
+    		
     		byte[] pubkeyBytes;
-			pubkeyBytes = Hex.decodeHex(pubkeyString.toCharArray()); 
+			pubkeyBytes = Hex.decodeHex(pk.toCharArray()); 
+			byte[] privkeyBytes = Hex.decodeHex(sk.toCharArray()); 
+			System.out.println("on envoie : "+Utils.addLength16bits(pubkeyBytes));
     		out.write(Utils.addLength16bits(pubkeyBytes)); 
-    		out.write(Utils.hash(seed,64));
+			System.out.println("on envoie : "+Utils.hash(seed,32));
+			System.out.println("seed hash : "+ Hex.encodeHex(Utils.hash(myseed,32)));
+
+			//----------------------
+//			Signature sig = Signature.getInstance("Ed25519");
+			Ed25519PrivateKeyParameters sk2 = new Ed25519PrivateKeyParameters(privkeyBytes);
+	        Signer signer = new Ed25519Signer();
+	        signer.init(true, sk2);
+	        signer.update(Utils.hash(myseed,32), 0, 32);
+	        byte[] signature = null;
+	        try {
+	        signature = signer.generateSignature();
+	        } catch (Exception e) {
+	        	
+	        }
+	        String hexsignature = new String(Hex.encodeHex(signature)); 
+	        System.out.println("signature = "+hexsignature);
+//			sig.initSign(null);
+//		    sig.update(Utils.hash(seed,32));
+//		    byte[] s = sig.sign();
+			//----------------------
+			
+//    		out.write(signature(Utils.hash(seed,32)));
 			System.out.println("1) socket()="+socket.toString()+",socket.isConnected()="+socket.isConnected());
 
+			/////////////////////////////////////
 			byte[] msg= {(byte)0x00,(byte)0x02,(byte)0x00,(byte)0x01};
     		out.write(msg);
 
