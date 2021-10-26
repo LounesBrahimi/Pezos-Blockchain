@@ -23,17 +23,17 @@ public class Block {
 	
 	public Block(int level, String predecessor, String dateAsString, String operationsHash, String stateHash, String signature) throws DecoderException, ParseException {
 		this.level          = level;
-		this.predecessor    = Utils.getBytes(predecessor); 
-		this.timestamp      = Utils.getDateAsSeconds(dateAsString);
-		this.operationsHash = Utils.getBytes(operationsHash);
-		this.stateHash      = Utils.getBytes(stateHash);
-		this.signature      = Utils.getBytes(signature);
+		this.predecessor    = Utils.toBytesArray(predecessor); 
+		this.timestamp      = Utils.toDateAsSeconds(dateAsString);
+		this.operationsHash = Utils.toBytesArray(operationsHash);
+		this.stateHash      = Utils.toBytesArray(stateHash);
+		this.signature      = Utils.toBytesArray(signature);
 	}
 
 	public Block(byte[] blockInBytes) {
-		this.level          = Utils.getInt(Arrays.copyOfRange(blockInBytes,0,3)); // const ?
+		this.level          = Utils.toInt(Arrays.copyOfRange(blockInBytes,0,3)); // const ?
 		this.predecessor    = Arrays.copyOfRange(blockInBytes,4,35); 
-		this.timestamp      = Utils.getLong(Arrays.copyOfRange(blockInBytes,36,43));
+		this.timestamp      = Utils.toLong(Arrays.copyOfRange(blockInBytes,36,43));
 		this.operationsHash = Arrays.copyOfRange(blockInBytes,44,75);
 		this.stateHash      = Arrays.copyOfRange(blockInBytes,76,107);
 		this.signature      = Arrays.copyOfRange(blockInBytes,108,171);
@@ -42,9 +42,9 @@ public class Block {
 	
 	public byte[] encodeToBytes() throws IOException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		outputStream.write(Utils.getBytes(level));
+		outputStream.write(Utils.toBytesArray(level));
 		outputStream.write(predecessor);
-		outputStream.write(Utils.getBytes(timestamp));
+		outputStream.write(Utils.toBytesArray(timestamp));
 		outputStream.write(operationsHash);
 		outputStream.write(stateHash);
 		outputStream.write(signature);
@@ -54,12 +54,12 @@ public class Block {
 	public String toString() {
 		try {
 			return "level:           "+level+
-				 "\npredecessor:     "+Utils.getAsStringOfHex(predecessor)+
-				 "\ntimestamp:       "+Utils.getDateAsString(timestamp)+" (="+timestamp+" sec)"+
-				 "\noperations hash: "+Utils.getAsStringOfHex(operationsHash)+
-				 "\nstate hash:      "+Utils.getAsStringOfHex(stateHash)+
-				 "\nsignature:       "+Utils.getAsStringOfHex(signature)+
-				 "\nencoded block:   "+Utils.getAsStringOfHex(this.encodeToBytes());
+				 "\npredecessor:     "+Utils.toStringOfHex(predecessor)+
+				 "\ntimestamp:       "+Utils.toDateAsString(timestamp)+" (="+timestamp+" sec)"+
+				 "\noperations hash: "+Utils.toStringOfHex(operationsHash)+
+				 "\nstate hash:      "+Utils.toStringOfHex(stateHash)+
+				 "\nsignature:       "+Utils.toStringOfHex(signature)+
+				 "\nencoded block:   "+Utils.toStringOfHex(this.encodeToBytes());
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
