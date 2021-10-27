@@ -5,12 +5,12 @@ import java.util.Arrays;
 import org.apache.commons.codec.DecoderException;
 
 public class Block {
-	int    level; 
-	byte[] predecessor;
-	long   timestamp; // long?
-	byte[] operationsHash;
-	byte[] stateHash;
-	byte[] signature;
+	int    level=0; 
+	byte[] predecessor = null;
+	long   timestamp=0; 
+	byte[] operationsHash = null;
+	byte[] stateHash = null;
+	byte[] signature = null;
 	
 	public Block(int level, byte[] predecessor, long timestamp, byte[] operationsHash, byte[] stateHash, byte[] signature) {
 		this.level          = level;
@@ -30,21 +30,24 @@ public class Block {
 		this.signature      = Utils.toBytesArray(signature);
 	}
 
-	public Block(byte[] blockInBytes) {
-		this.level          = Utils.toInt(Arrays.copyOfRange(blockInBytes,0,3)); // const ?
-		this.predecessor    = Arrays.copyOfRange(blockInBytes,4,35); 
-		this.timestamp      = Utils.toLong(Arrays.copyOfRange(blockInBytes,36,43));
-		this.operationsHash = Arrays.copyOfRange(blockInBytes,44,75);
-		this.stateHash      = Arrays.copyOfRange(blockInBytes,76,107);
-		this.signature      = Arrays.copyOfRange(blockInBytes,108,171);
-
+	public Block(byte[] receivedMessage) { 
+		if(!Arrays.equals(Arrays.copyOfRange(receivedMessage,0,2),new byte[] {(byte)0x00,(byte)0x02})) {
+			System.out.println(); // throw exception ?
+			return;
+		}
+		this.level          = Utils.toInt(Arrays.copyOfRange(receivedMessage,2,6)); 
+		this.predecessor    = Arrays.copyOfRange(receivedMessage,6,38); 
+		this.timestamp      = Utils.toLong(Arrays.copyOfRange(receivedMessage,38,46));
+		this.operationsHash = Arrays.copyOfRange(receivedMessage,46,78);
+		this.stateHash      = Arrays.copyOfRange(receivedMessage,78,110);
+		this.signature      = Arrays.copyOfRange(receivedMessage,110,174);
 	}
 	
 	public byte[] encodeToBytes() throws IOException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		outputStream.write(Utils.toBytesArray(level));
-		outputStream.write(predecessor);
-		outputStream.write(Utils.toBytesArray(timestamp));
+		outputStream.write(Utils.to4BytesArray(level));
+		outputStream.write(predecessor); 
+		outputStream.write(Utils.to8BytesArray(timestamp));
 		outputStream.write(operationsHash);
 		outputStream.write(stateHash);
 		outputStream.write(signature);
@@ -52,17 +55,17 @@ public class Block {
 	}
 
 	public String toString() {
-		try {
-			return "level:           "+level+
-				 "\npredecessor:     "+Utils.toStringOfHex(predecessor)+
-				 "\ntimestamp:       "+Utils.toDateAsString(timestamp)+" (="+timestamp+" sec)"+
-				 "\noperations hash: "+Utils.toStringOfHex(operationsHash)+
-				 "\nstate hash:      "+Utils.toStringOfHex(stateHash)+
-				 "\nsignature:       "+Utils.toStringOfHex(signature)+
-				 "\nencoded block:   "+Utils.toStringOfHex(this.encodeToBytes());
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-		return null;
+			try {
+				return "level:           "+level+ " (or "+Utils.toStringOfHex(level) +" as Hex)"+
+					 "\npredecessor:     "+Utils.toStringOfHex(predecessor)+
+					 "\ntimestamp:       "+(Utils.toDateAsString(timestamp)+" (="+timestamp+" sec)")+
+					 "\noperations hash: "+Utils.toStringOfHex(operationsHash)+
+					 "\nstate hash:      "+Utils.toStringOfHex(stateHash)+
+					 "\nsignature:       "+Utils.toStringOfHex(signature)+
+					 "\nencoded block:   "+Utils.toStringOfHex(this.encodeToBytes());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
 	}
 }

@@ -47,7 +47,7 @@ public class Utils {
 	//////// to/from socket
 	static byte[] getFromSocket(int nbBytesWanted, DataInputStream in, String comment) throws IOException {
 		byte[] result = new byte[nbBytesWanted];
-		int nbBytesReceived = in.read(result,0,nbBytesWanted);
+		int nbBytesReceived = in.read(result,0,nbBytesWanted); 
 		System.out.println((comment==""?"":comment+" ")+"received: "+ nbBytesReceived+ " bytes " + new String(Hex.encodeHex(result)));
 		return result;
 	}	
@@ -70,22 +70,29 @@ public class Utils {
 	
 	static void sendToSocket(byte[] bytesArrayToSend, DataOutputStream out, String comment) throws IOException, DecoderException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		outputStream.write(toBytesArray(bytesArrayToSend.length));
+		outputStream.write(to2BytesArray(bytesArrayToSend.length));
 		outputStream.write(bytesArrayToSend);
 		bytesArrayToSend = outputStream.toByteArray(); 
 		out.write(bytesArrayToSend); 
+		out.flush(); // binome !
 		System.out.println((comment==""?"":comment+" ")+"sent: "+toStringOfHex(bytesArrayToSend));
 	}
 
 	
 	////// converters
-	static byte[] toBytesArray(int int16bits) { // = encode_entier TME 1
+	static byte[] to2BytesArray(int int2bytes) { 
 		ByteBuffer convertedToBytes = ByteBuffer.allocate(2);
-		convertedToBytes.putShort((short)int16bits);
+		convertedToBytes.putShort((short)int2bytes);
+		return convertedToBytes.array();
+	}
+	
+	static byte[] to4BytesArray(int int4bytes) { // = encode_entier TME 1
+		ByteBuffer convertedToBytes = ByteBuffer.allocate(4);
+		convertedToBytes.putInt(int4bytes);
 		return convertedToBytes.array();
 	}
 
-	static byte[] toBytesArray(long long64bits) { 
+	static byte[] to8BytesArray(long long64bits) { 
 		ByteBuffer convertedToBytes = ByteBuffer.allocate(8);
 		convertedToBytes.putLong(long64bits);
 		return convertedToBytes.array();
@@ -104,14 +111,19 @@ public class Utils {
 	}
 	
 	static int toInt(byte[] bytes) {
-	     return ByteBuffer.wrap(bytes).getInt();
+	    return bytes[0] << 24 | (bytes[1] & 0xFF) << 16 | (bytes[2] & 0xFF) << 8 | (bytes[3] & 0xFF);
 	}
 
 	static long toLong(byte[] bytes) {
-	     return ByteBuffer.wrap(bytes).getLong();
+	    return ByteBuffer.wrap(bytes).getLong();
+	}
+	
+	static String toStringOfHex(int n) {
+		return toStringOfHex(to4BytesArray(n));
 	}
 	
 	static String toStringOfHex(byte[] bytes) {
+		if(bytes==null || bytes.length==0) return "";
 		final byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
 	    byte[] hexChars = new byte[bytes.length * 2];
 	    for (int j = 0; j < bytes.length; j++) {
