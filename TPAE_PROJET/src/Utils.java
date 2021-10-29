@@ -26,6 +26,7 @@ import ove.crypto.digest.Blake2b;
 
 public class Utils {
 	///////// crypto
+
 	public static byte[] hash(byte[] valeurToHash, int hashParamNbBytes) { // TME 1
 		Blake2b.Param param = new Blake2b.Param().setDigestLength(hashParamNbBytes);
 		final Blake2b blake2b = Blake2b.Digest.newInstance(param);        
@@ -42,6 +43,17 @@ public class Utils {
 		signature = signer.generateSignature();
 		return signature;
 	}
+
+	static Blake2b.Param param = new Blake2b.Param().setDigestLength(32);
+	final static Blake2b blake2b = Blake2b.Digest.newInstance(param);        
+	static byte[] concat_hash(byte[] hash1, byte[] hash2) throws IOException { // TME 2
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		outputStream.write(hash1);
+		outputStream.write(hash2);
+		byte twoHashes[] = outputStream.toByteArray();
+		byte hashOfTwoHashes[] = blake2b.digest(twoHashes);
+		return hashOfTwoHashes;
+	}	
 
 
 	//////// to/from socket
