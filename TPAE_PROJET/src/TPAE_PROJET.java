@@ -1,7 +1,7 @@
 // fermer la connection ?
-// Les clés sont encodés en hexadécimal et doivent être décodés vers des bytes.
 // TCP keepalives ?
 // un seul hash dans l'arbre?
+// n = 2^k ?
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -21,18 +21,23 @@ public class TPAE_PROJET {
 		//Block testBlock = new Block(44,"1c80203a30e5de4d980cc555131d1b4a4750edc82c0c443179d88de1ae4f6cdf","2021-10-10 15:21:09","0000000000000000000000000000000000000000000000000000000000000000","22a00d1c8c0fbaefedd71ddb83d455033efd259a8f0adf189b9f850a0d1945f2","cc3faffc696c86db13d50752fdb7edd0ee1ce19ab350f60899939fc139d58996419c13b812b7f005fafaf23924d2f1df555036bc61e7b67cb679375e5756b306");
 		//System.out.println(testBlock+"\n");
 		
-		ArrayList<String> donnees = new ArrayList<String>(); // size = 2^n
-		donnees.add("a");
-		donnees.add("b");
-		donnees.add("c");
-		donnees.add("d");
-		donnees.add("e");
-		donnees.add("f");
-		donnees.add("g");
-		donnees.add("h");
-		MerkleTree tree = new MerkleTree(donnees);
-		System.out.println("INITIAL TREE : "+tree);
-		System.out.println("WINTESS TREE : "+Utils.witness("a",tree));
+		ArrayList<String> dataArray = new ArrayList<String>(); // size = 2^n
+		dataArray.add("a");
+		dataArray.add("b");
+		dataArray.add("c");
+		dataArray.add("d");
+		dataArray.add("e");
+		dataArray.add("f");
+		dataArray.add("g");
+		dataArray.add("h");
+		MerkleTree tree = new MerkleTree(dataArray);
+		System.out.println("INITIAL TREE      : "+tree);
+		MerkleTree witnessTree = Utils.witness("a",tree);
+		System.out.println("WINTESS TREE      : "+witnessTree);
+		System.out.println("witness root hash = "+Utils.toHexString(Utils.calculateMerkleRootHash(witnessTree)));
+	
+		System.out.println("verify            = "+Utils.verify(witnessTree,Utils.toBytesArray("99CF46EDB69D02E18CCE4989225F80386FF39D8B355CDEA2971B532F901A055D")));
+		System.out.println("verify            = "+Utils.verify(witnessTree,Utils.toBytesArray("99CF46EDB69D02E18CCE4989225F80386FF39D8B355CDEA2971B532F901A0555")));
 		
 		//Connection connection = new Connection(hostname,port,sk,pk);
 		//new IterationLoop(connection); 

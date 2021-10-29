@@ -4,14 +4,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Formatter;
-
 import org.apache.commons.codec.DecoderException;
-
-import ove.crypto.digest.Blake2b;
 
 public class MerkleTree implements Serializable {
 	MerkleTree left  = null;
@@ -33,7 +28,7 @@ public class MerkleTree implements Serializable {
 			partieDroite.addAll(donnees.subList(donnees.size()/2,donnees.size())); 
 			this.left  = new MerkleTree(partieGauche);
 			this.right = new MerkleTree(partieDroite);
-			this.hash  = Utils.concat_hash(this.left.getHash(),this.right.getHash());
+			this.hash  = Utils.concat_hash(this.left.hash,this.right.hash);
 		}
 	}
 	
@@ -57,10 +52,6 @@ public class MerkleTree implements Serializable {
 
 
 	////////////////////// getters and utils
-	public byte[] getHash() {
-		return hash;
-	}
-
 	public String toString() {
 		String rootHash = String.format("%.4s...",Utils.toHexString(this.hash));
 		return rootHash + (this.left==null&&this.right==null ? "*  ":("  "+this.left.toString()+this.right.toString()));
@@ -85,9 +76,9 @@ public class MerkleTree implements Serializable {
 	}
 			
 
-	////////// archive
-	public MerkleTree find(String wantedHash) throws DecoderException {
-		return find(Utils.toBytesArray(wantedHash));
+	////////// archive 
+	public MerkleTree find(String wantedString) throws DecoderException {
+		return find(Utils.toBytesArray(wantedString));
 	}
 		
 	public MerkleTree find(byte[] wantedHash) {
@@ -109,11 +100,11 @@ public class MerkleTree implements Serializable {
 		}
 	}
 
-	public byte[] witnessAsListNodes(String str) throws IOException { // Ex 4
-		return witnessAsListNodes(Utils.blake2b.digest(str.getBytes()));
+	public byte[] witnessAsListNodes(String wantedString) throws IOException { // Ex 4
+		return witnessAsListOfNodes(Utils.blake2b.digest(wantedString.getBytes()));
 	}
 	
-	public byte[] witnessAsListNodes(byte[] wantedHash) throws IOException { // Ex 4
+	public byte[] witnessAsListOfNodes(byte[] wantedHash) throws IOException { // Ex 4
 		if(this.left==null || this.right==null) { 
 			// the leaves (of the witness) have been already verified from theirs parent nodes // mais on ne rentre pas dans les feuilles ?
 			return wantedHash;
@@ -131,13 +122,13 @@ public class MerkleTree implements Serializable {
 		}
 		else { 
 			// isn't leaf, isn't a parent of a leaf
-			byte[] potentialNewWantedHashLeft  = this.left.witnessAsListNodes(wantedHash);
+			byte[] potentialNewWantedHashLeft  = this.left.witnessAsListOfNodes(wantedHash);
 			if(!Arrays.equals(potentialNewWantedHashLeft,wantedHash)) {
 				System.out.printf("%.4s\n",Utils.toHexString(this.hash));
 				System.out.printf("%.4s\n",Utils.toHexString(this.right.hash));
 				return potentialNewWantedHashLeft;
 			}
-			byte[] potentialNewWantedHashRight = this.right.witnessAsListNodes(wantedHash);
+			byte[] potentialNewWantedHashRight = this.right.witnessAsListOfNodes(wantedHash);
 			if(!Arrays.equals(potentialNewWantedHashRight,wantedHash)) {
 				System.out.printf("%.4s\n",Utils.toHexString(this.hash));
 				System.out.printf("%.4s\n",Utils.toHexString(this.left.hash));
@@ -147,8 +138,8 @@ public class MerkleTree implements Serializable {
 		return wantedHash; // null?
 	}
 
-	public byte[] pathToWantedHash(String str) throws IOException { 
-		return pathToWantedHash(Utils.blake2b.digest(str.getBytes()));
+	public byte[] pathToWantedHash(String wantedString) throws IOException { 
+		return pathToWantedHash(Utils.blake2b.digest(wantedString.getBytes()));
 	}
 	
 	public byte[] pathToWantedHash(byte[] wantedHash) throws IOException { 
@@ -181,103 +172,4 @@ public class MerkleTree implements Serializable {
 		}
 		return wantedHash; // null ?
 	}
-
-	public MerkleTree witness0(byte[] wantedHash) throws IOException, DecoderException { // Ex 4
-		// ne marche pas
-		if(this.left==null || this.left.left==null || this.left.right==null) {
-			// there is no little children on the left
-			System.out.printf("%.4s on the left  : no little children\n",Utils.toHexString(this.hash));
-		}
-		else if(Arrays.equals(this.left.left.hash,wantedHash) || Arrays.equals(this.left.right.hash,wantedHash)) {
-			// a little child on the left == wantedHash
-			System.out.printf("%.4s on the left  : a little child == wantedHash\n",Utils.toHexString(this.hash));
-			this.right.left=null;
-			this.right.right=null;
-			System.out.printf("%.4s: %s\n",Utils.toHexString(this.hash),this);
-		}
-		else {
-			// on the left : to verify
-			System.out.printf("%.4s on the left  : to verify\n",Utils.toHexString(this.hash));
-			byte[] hashLeftChildBefore = this.left.hash;
-			System.out.printf("%.4s hashLeftChildBefore=%.4s\n",Utils.toHexString(this.hash),Utils.toHexString(hashLeftChildBefore));
-			this.left = this.left.witness0(wantedHash);
-			byte[] hashLeftChildAfter  = this.left.hash;
-			System.out.printf("%.4s hashLeftChildAfter=%.4s\n",Utils.toHexString(this.hash),Utils.toHexString(hashLeftChildAfter));
-			//if(Arrays.equals(hashLeftChildBefore,hashLeftChildAfter)) {
-			//	this.left.left=null;
-			//	this.left.right=null;
-			//	System.out.printf("%.4s %s\n",Utils.toHexString(this.hash),this);
-			//}
-		}
-
-		if(this.right==null || this.right.left==null || this.right.right==null) {
-			// on the right : there is no little children 
-			System.out.printf("%.4s on the right : no little children\n",Utils.toHexString(this.hash));
-		}
-		else if(Arrays.equals(this.right.left.hash,wantedHash) || Arrays.equals(this.right.right.hash,wantedHash)) {
-			// on the right : a little child == wantedHash
-			System.out.printf("%.4s on the right : a little child == wantedHash\n",Utils.toHexString(this.hash));
-			this.left.left=null;
-			this.left.right=null;
-			System.out.printf("%.4s: %s\n",Utils.toHexString(this.hash),this);
-		}
-		else {
-			// on the right: to verify
-			System.out.printf("%.4s on the right : to verify\n",Utils.toHexString(this.hash));
-			byte[] hashRightChildBefore = this.right.hash;
-			this.right = this.right.witness0(wantedHash);
-			System.out.printf("%.4s %s\n",Utils.toHexString(this.hash),this);
-			byte[] hashRightChildAfter = this.right.hash;
-			// if(!Arrays.equals(hashRightChildBefore,hashRightChildAfter)) {
-			// 	this.right.left=null;
-			//	this.right.right=null;
-			//	System.out.printf("%.4s %s\n",Utils.toHexString(this.hash),this);
-			//}				
-			System.out.printf("%.4s %s\n",Utils.toHexString(this.hash),this);
-			}
-		System.out.printf("%.4s return %s\n",Utils.toHexString(this.hash),this);
-		return this;		
-	}
-	
-	/* public byte[] witnessBACKUP(byte[] wantedHash, MerkleTree resultTree) throws IOException { // TME 2, Ex 4
-	if(this.left==null || this.right==null) { 
-		// the leaves (of the witness) have been already verified from theirs parent nodes // mais on ne rentre pas dans les feuilles ?
-		return wantedHash;
-	}
-	else if(Arrays.equals(this.left.hash,wantedHash)) {
-		// left child == wantedHash
-		resultTree.right.left=null;
-		resultTree.right.right=null;
-		return Utils.concat_hash(this.left.hash, this.right.hash);
-	}
-	else if(Arrays.equals(this.right.hash,wantedHash)) {
-		// right child == wantedHash
-		resultTree.left.left=null;
-		resultTree.left.right=null;
-		return Utils.concat_hash(this.left.hash, this.right.hash);
-	}
-	else if(this.left.left==null || this.left.right==null || this.right.left==null || this.right.right==null) { 
-		// is a parent of a leaf, no child == wantedHash
-		resultTree.left=null;
-		resultTree.right=null;
-		return wantedHash;
-	}
-	else { 
-		// isn't a leaf, isn't a parent of a leaf
-		byte[] potentialNewWantedHashLeft  = this.left.witnessBACKUP(wantedHash,resultTree.left);
-		if(!Arrays.equals(potentialNewWantedHashLeft,wantedHash)) {
-			resultTree.right.left=null;
-			resultTree.right.right=null;
-			return potentialNewWantedHashLeft;
-		}
-		byte[] potentialNewWantedHashRight = this.right.witnessBACKUP(wantedHash,resultTree.right);
-		if(!Arrays.equals(potentialNewWantedHashRight,wantedHash)) {
-			resultTree.left.left=null;
-			resultTree.left.right=null;
-			return potentialNewWantedHashRight;
-		}
-	}
-	return wantedHash; // null?
-}*/
-
 }

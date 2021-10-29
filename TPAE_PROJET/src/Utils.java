@@ -4,17 +4,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.security.Timestamp;
 import java.text.ParseException;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.bouncycastle.crypto.CryptoException;
@@ -26,8 +21,8 @@ import org.bouncycastle.crypto.signers.Ed25519Signer;
 import ove.crypto.digest.Blake2b;
 
 public class Utils {
-	///////// crypto
 
+	///////// crypto
 	public static byte[] hash(byte[] valeurToHash, int hashParamNbBytes) { // TME 1
 		Blake2b.Param param = new Blake2b.Param().setDigestLength(hashParamNbBytes);
 		final Blake2b blake2b = Blake2b.Digest.newInstance(param);        
@@ -56,8 +51,8 @@ public class Utils {
 		return hashOfTwoHashes;
 	}	
 
-	public static MerkleTree witness(String str, MerkleTree resultTree) throws IOException {
-		return witness(Utils.blake2b.digest(str.getBytes()),resultTree);
+	public static MerkleTree witness(String wantedString, MerkleTree resultTree) throws IOException {
+		return witness(Utils.blake2b.digest(wantedString.getBytes()),resultTree);
 	}
 
 	public static MerkleTree witness(byte[] wantedHash, MerkleTree tree) throws IOException { // TME 2, Ex 4
@@ -104,16 +99,22 @@ public class Utils {
 				return potentialNewWantedHashRight;
 			}
 		}
-		return wantedHash; // null?
+		return wantedHash; 
 	}
 
-	public boolean verify(MerkleTree witness, byte[] rootHash) { // TME 2, Ex 5
-		return Arrays.equals(calculateRootHash(witness),rootHash);
+	public static boolean verify(MerkleTree witness, byte[] rootHash) throws IOException { // TME 2, Ex 5
+		return Arrays.equals(calculateMerkleRootHash(witness),rootHash);
 	}
 
-	public byte[] calculateRootHash(MerkleTree witness) {
-		byte[] f=null;
-		return f;
+	public static boolean verify(MerkleTree witness, String wantedString) throws IOException { 		
+		return Arrays.equals(calculateMerkleRootHash(witness),Utils.blake2b.digest(wantedString.getBytes()));
+	}
+
+	public static byte[] calculateMerkleRootHash(MerkleTree witness) throws IOException {
+		// for a witness only, not for any MerkleTree
+		if(witness.left==null && witness.right==null)
+			return null;
+		return concat_hash(witness.left.hash,witness.right.hash);
 	}
 
 	//////// to/from socket
