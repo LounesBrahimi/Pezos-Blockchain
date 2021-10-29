@@ -13,6 +13,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
@@ -46,7 +47,7 @@ public class Utils {
 
 	static Blake2b.Param param = new Blake2b.Param().setDigestLength(32);
 	final static Blake2b blake2b = Blake2b.Digest.newInstance(param);        
-	static byte[] concat_hash(byte[] hash1, byte[] hash2) throws IOException { // TME 2
+	static byte[] concat_hash(byte[] hash1, byte[] hash2) throws IOException { // TME 2, Ex 1
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		outputStream.write(hash1);
 		outputStream.write(hash2);
@@ -55,6 +56,65 @@ public class Utils {
 		return hashOfTwoHashes;
 	}	
 
+	public static MerkleTree witness(String str, MerkleTree resultTree) throws IOException {
+		return witness(Utils.blake2b.digest(str.getBytes()),resultTree);
+	}
+
+	public static MerkleTree witness(byte[] wantedHash, MerkleTree tree) throws IOException { // TME 2, Ex 4
+		MerkleTree resultTree = tree.clone();
+		witnessRecours(wantedHash,resultTree);
+		return resultTree;
+	}
+	
+	public static byte[] witnessRecours(byte[] wantedHash, MerkleTree resultTree) throws IOException { 
+		if(resultTree.left==null || resultTree.right==null) { 
+			// the leaves (of the witness) have been already verified from theirs parent nodes // mais on ne rentre pas dans les feuilles ?
+			return wantedHash;
+		}
+		else if(Arrays.equals(resultTree.left.hash,wantedHash)) {
+			// left child == wantedHash
+			resultTree.right.left=null;
+			resultTree.right.right=null;
+			return Utils.concat_hash(resultTree.left.hash, resultTree.right.hash);
+		}
+		else if(Arrays.equals(resultTree.right.hash,wantedHash)) {
+			// right child == wantedHash
+			resultTree.left.left=null;
+			resultTree.left.right=null;
+			return Utils.concat_hash(resultTree.left.hash, resultTree.right.hash);
+		}
+		else if(resultTree.left.left==null || resultTree.left.right==null || resultTree.right.left==null || resultTree.right.right==null) { 
+			// is a parent of a leaf, no child == wantedHash
+			resultTree.left=null;
+			resultTree.right=null;
+			return wantedHash;
+		}
+		else { 
+			// isn't a leaf, isn't a parent of a leaf
+			byte[] potentialNewWantedHashLeft = witnessRecours(wantedHash,resultTree.left);
+			if(!Arrays.equals(potentialNewWantedHashLeft,wantedHash)) {
+				resultTree.right.left=null;
+				resultTree.right.right=null;
+				return potentialNewWantedHashLeft;
+			}
+			byte[] potentialNewWantedHashRight = witnessRecours(wantedHash,resultTree.right);
+			if(!Arrays.equals(potentialNewWantedHashRight,wantedHash)) {
+				resultTree.left.left=null;
+				resultTree.left.right=null;
+				return potentialNewWantedHashRight;
+			}
+		}
+		return wantedHash; // null?
+	}
+
+	public boolean verify(MerkleTree witness, byte[] rootHash) { // TME 2, Ex 5
+		return Arrays.equals(calculateRootHash(witness),rootHash);
+	}
+
+	public byte[] calculateRootHash(MerkleTree witness) {
+		byte[] f=null;
+		return f;
+	}
 
 	//////// to/from socket
 	static byte[] getFromSocket(int nbBytesWanted, DataInputStream in, String comment) throws IOException {

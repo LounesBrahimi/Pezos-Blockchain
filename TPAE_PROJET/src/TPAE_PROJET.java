@@ -32,10 +32,7 @@ public class TPAE_PROJET {
 		donnees.add("h");
 		MerkleTree tree = new MerkleTree(donnees);
 		System.out.println("INITIAL TREE : "+tree);
-
-		MerkleTree witnessTree= tree.clone();
-		witnessTree.witness("a",witnessTree);
-		System.out.println("WINTESS TREE : "+witnessTree);
+		System.out.println("WINTESS TREE : "+Utils.witness("a",tree));
 		
 		//Connection connection = new Connection(hostname,port,sk,pk);
 		//new IterationLoop(connection); 

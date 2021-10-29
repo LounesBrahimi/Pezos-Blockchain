@@ -55,54 +55,7 @@ public class MerkleTree implements Serializable {
 		this.hash   = Utils.blake2b.digest(str.getBytes());
 	}
 
-	
-	////////////// essential
-	public byte[] witness(String str,MerkleTree tree) throws IOException {
-		return witness(Utils.blake2b.digest(str.getBytes()),tree);
-	}
 
-	public byte[] witness(byte[] wantedHash, MerkleTree tree) throws IOException { 
-		if(this.left==null || this.right==null) { 
-			// the leaves (of the witness) have been already verified from theirs parent nodes // mais on ne rentre pas dans les feuilles ?
-			return wantedHash;
-		}
-		else if(Arrays.equals(this.left.hash,wantedHash)) {
-			// left child == wantedHash
-			tree.right.left=null;
-			tree.right.right=null;
-			return Utils.concat_hash(this.left.hash, this.right.hash);
-		}
-		else if(Arrays.equals(this.right.hash,wantedHash)) {
-			// right child == wantedHash
-			tree.left.left=null;
-			tree.left.right=null;
-			return Utils.concat_hash(this.left.hash, this.right.hash);
-		}
-		else if(this.left.left==null || this.left.right==null || this.right.left==null || this.right.right==null) { 
-			// is a parent of a leaf, no child == wantedHash
-			tree.left=null;
-			tree.right=null;
-			return wantedHash;
-		}
-		else { 
-			// isn't a leaf, isn't a parent of a leaf
-			byte[] potentialNewWantedHashLeft  = this.left.witness(wantedHash,tree.left);
-			if(!Arrays.equals(potentialNewWantedHashLeft,wantedHash)) {
-				tree.right.left=null;
-				tree.right.right=null;
-				return potentialNewWantedHashLeft;
-			}
-			byte[] potentialNewWantedHashRight = this.right.witness(wantedHash,tree.right);
-			if(!Arrays.equals(potentialNewWantedHashRight,wantedHash)) {
-				tree.left.left=null;
-				tree.left.right=null;
-				return potentialNewWantedHashRight;
-			}
-		}
-		return wantedHash; // null?
-	}
-
-	
 	////////////////////// getters and utils
 	public byte[] getHash() {
 		return hash;
@@ -139,7 +92,7 @@ public class MerkleTree implements Serializable {
 		
 	public MerkleTree find(byte[] wantedHash) {
 		if(this.left==null || this.right==null) { // a leaf
-			if(Arrays.equals(this.hash,wantedHash)) // compare?
+			if(Arrays.equals(this.hash,wantedHash)) 
 				return this;
 			else
 				return null;
@@ -285,4 +238,46 @@ public class MerkleTree implements Serializable {
 		System.out.printf("%.4s return %s\n",Utils.toHexString(this.hash),this);
 		return this;		
 	}
+	
+	/* public byte[] witnessBACKUP(byte[] wantedHash, MerkleTree resultTree) throws IOException { // TME 2, Ex 4
+	if(this.left==null || this.right==null) { 
+		// the leaves (of the witness) have been already verified from theirs parent nodes // mais on ne rentre pas dans les feuilles ?
+		return wantedHash;
+	}
+	else if(Arrays.equals(this.left.hash,wantedHash)) {
+		// left child == wantedHash
+		resultTree.right.left=null;
+		resultTree.right.right=null;
+		return Utils.concat_hash(this.left.hash, this.right.hash);
+	}
+	else if(Arrays.equals(this.right.hash,wantedHash)) {
+		// right child == wantedHash
+		resultTree.left.left=null;
+		resultTree.left.right=null;
+		return Utils.concat_hash(this.left.hash, this.right.hash);
+	}
+	else if(this.left.left==null || this.left.right==null || this.right.left==null || this.right.right==null) { 
+		// is a parent of a leaf, no child == wantedHash
+		resultTree.left=null;
+		resultTree.right=null;
+		return wantedHash;
+	}
+	else { 
+		// isn't a leaf, isn't a parent of a leaf
+		byte[] potentialNewWantedHashLeft  = this.left.witnessBACKUP(wantedHash,resultTree.left);
+		if(!Arrays.equals(potentialNewWantedHashLeft,wantedHash)) {
+			resultTree.right.left=null;
+			resultTree.right.right=null;
+			return potentialNewWantedHashLeft;
+		}
+		byte[] potentialNewWantedHashRight = this.right.witnessBACKUP(wantedHash,resultTree.right);
+		if(!Arrays.equals(potentialNewWantedHashRight,wantedHash)) {
+			resultTree.left.left=null;
+			resultTree.left.right=null;
+			return potentialNewWantedHashRight;
+		}
+	}
+	return wantedHash; // null?
+}*/
+
 }
