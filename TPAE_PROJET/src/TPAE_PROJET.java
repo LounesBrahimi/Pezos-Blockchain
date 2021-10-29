@@ -1,6 +1,7 @@
 // fermer la connection ?
 // Les clés sont encodés en hexadécimal et doivent être décodés vers des bytes.
 // TCP keepalives ?
+// un seul hash dans l'arbre?
 
 import java.io.IOException;
 import java.text.ParseException;

@@ -75,7 +75,7 @@ public class Utils {
 		bytesArrayToSend = outputStream.toByteArray(); 
 		out.write(bytesArrayToSend); 
 		out.flush(); // binome !
-		System.out.println((comment==""?"":comment+" ")+"sent: "+toStringOfHex(bytesArrayToSend));
+		System.out.println((comment==""?"":comment+" ")+"sent: "+toHexString(bytesArrayToSend));
 	}
 
 	
@@ -119,10 +119,10 @@ public class Utils {
 	}
 	
 	static String toStringOfHex(int n) {
-		return toStringOfHex(to4BytesArray(n));
+		return toHexString(to4BytesArray(n));
 	}
 	
-	static String toStringOfHex(byte[] bytes) {
+	static String toHexString(byte[] bytes) {
 		if(bytes==null || bytes.length==0) return "";
 		final byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
 	    byte[] hexChars = new byte[bytes.length * 2];
