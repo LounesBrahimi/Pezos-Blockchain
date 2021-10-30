@@ -80,13 +80,22 @@ public class Interaction {
 	        }
 	    }
 	 
-	 public void verifyPredecessorValue(byte[] level, byte[] PredecessorInBlock, DataOutputStream out, DataInputStream  in) throws IOException, org.apache.commons.codec.DecoderException {
+	 public void verifyPredecessorValue(int level, byte[] PredecessorInBlock, DataOutputStream out, DataInputStream  in) throws IOException, org.apache.commons.codec.DecoderException {
 	        byte[] msg = util.to2BytesArray(3);
-	        msg = concatTwoArrays(msg, level);
+	        msg = concatTwoArrays(msg, util.to4BytesArray(level));
 	        util.sendToSocket(msg,out,"tag 3");
 	        byte[] blockAsBytes = util.getFromSocket(174,in,"block");
 	        Block blockAsObjet = new Block(blockAsBytes);
 	        System.out.println(Arrays.areEqual(PredecessorInBlock, blockAsObjet.getPredecessor()));
+	 }
+	 
+	 public void verifyTimeStamp(int level, long timeStamp, DataOutputStream out, DataInputStream  in) throws IOException, org.apache.commons.codec.DecoderException {
+	        byte[] msg = util.to2BytesArray(3);
+	        msg = concatTwoArrays(msg, util.to4BytesArray(level));
+	        util.sendToSocket(msg,out,"tag 3");
+	        byte[] blockAsBytes = util.getFromSocket(174,in,"block");
+	        Block blockAsObjet = new Block(blockAsBytes);
+	        System.out.println((timeStamp - blockAsObjet.getTimeStamp())== 600);
 	 }
 	 
 	 

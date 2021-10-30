@@ -82,11 +82,15 @@ public class Block {
 			return null;
 	}
 	
-	public byte[] getLevel() {
-		return util.to4BytesArray(this.level);
+	public int getLevel() {
+		return this.level;
 	}
 	
 	public byte[] getPredecessor() {
 		return this.predecessor;
+	}
+	
+	public long getTimeStamp() {
+		return this.timestamp;
 	}
 }
