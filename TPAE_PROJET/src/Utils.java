@@ -51,73 +51,7 @@ public class Utils {
 		return hashOfTwoHashes;
 	}	
 
-	public static MerkleTree witness(String wantedString, MerkleTree resultTree) throws IOException {
-		return witness(Utils.blake2b.digest(wantedString.getBytes()),resultTree);
-	}
-
-	public static MerkleTree witness(byte[] wantedHash, MerkleTree tree) throws IOException { // TME 2, Ex 4
-		MerkleTree resultTree = tree.clone();
-		witnessRecours(wantedHash,resultTree);
-		return resultTree;
-	}
-	
-	public static byte[] witnessRecours(byte[] wantedHash, MerkleTree resultTree) throws IOException { 
-		if(resultTree.left==null || resultTree.right==null) { 
-			// the leaves (of the witness) have been already verified from theirs parent nodes // mais on ne rentre pas dans les feuilles ?
-			return wantedHash;
-		}
-		else if(Arrays.equals(resultTree.left.hash,wantedHash)) {
-			// left child == wantedHash
-			resultTree.right.left=null;
-			resultTree.right.right=null;
-			return Utils.concat_hash(resultTree.left.hash, resultTree.right.hash);
-		}
-		else if(Arrays.equals(resultTree.right.hash,wantedHash)) {
-			// right child == wantedHash
-			resultTree.left.left=null;
-			resultTree.left.right=null;
-			return Utils.concat_hash(resultTree.left.hash, resultTree.right.hash);
-		}
-		else if(resultTree.left.left==null || resultTree.left.right==null || resultTree.right.left==null || resultTree.right.right==null) { 
-			// is a parent of a leaf, no child == wantedHash
-			resultTree.left=null;
-			resultTree.right=null;
-			return wantedHash;
-		}
-		else { 
-			// isn't a leaf, isn't a parent of a leaf
-			byte[] potentialNewWantedHashLeft = witnessRecours(wantedHash,resultTree.left);
-			if(!Arrays.equals(potentialNewWantedHashLeft,wantedHash)) {
-				resultTree.right.left=null;
-				resultTree.right.right=null;
-				return potentialNewWantedHashLeft;
-			}
-			byte[] potentialNewWantedHashRight = witnessRecours(wantedHash,resultTree.right);
-			if(!Arrays.equals(potentialNewWantedHashRight,wantedHash)) {
-				resultTree.left.left=null;
-				resultTree.left.right=null;
-				return potentialNewWantedHashRight;
-			}
-		}
-		return wantedHash; 
-	}
-
-	public static boolean verify(MerkleTree witness, byte[] rootHash) throws IOException { // TME 2, Ex 5
-		return Arrays.equals(calculateMerkleRootHash(witness),rootHash);
-	}
-
-	public static boolean verify(MerkleTree witness, String wantedString) throws IOException { 		
-		return Arrays.equals(calculateMerkleRootHash(witness),Utils.blake2b.digest(wantedString.getBytes()));
-	}
-
-	public static byte[] calculateMerkleRootHash(MerkleTree witness) throws IOException {
-		// for a witness only, not for any MerkleTree
-		if(witness.left==null && witness.right==null)
-			return null;
-		return concat_hash(witness.left.hash,witness.right.hash);
-	}
-
-	//////// to/from socket
+	//////// socket
 	static byte[] getFromSocket(int nbBytesWanted, DataInputStream in, String comment) throws IOException {
 		byte[] result = new byte[nbBytesWanted];
 		int nbBytesReceived = in.read(result,0,nbBytesWanted); 

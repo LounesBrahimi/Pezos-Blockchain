@@ -1,7 +1,5 @@
 // fermer la connection ?
 // TCP keepalives ?
-// un seul hash dans l'arbre?
-// n = 2^k ?
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -31,15 +29,9 @@ public class TPAE_PROJET {
 		dataArray.add("g");
 		dataArray.add("h");
 		MerkleTree tree = new MerkleTree(dataArray);
-		System.out.println("INITIAL TREE      : "+tree);
-		MerkleTree witnessTree = Utils.witness("a",tree);
-		System.out.println("WINTESS TREE      : "+witnessTree);
-		System.out.println("witness root hash = "+Utils.toHexString(Utils.calculateMerkleRootHash(witnessTree)));
-	
-		System.out.println("verify            = "+Utils.verify(witnessTree,Utils.toBytesArray("99CF46EDB69D02E18CCE4989225F80386FF39D8B355CDEA2971B532F901A055D")));
-		System.out.println("verify            = "+Utils.verify(witnessTree,Utils.toBytesArray("99CF46EDB69D02E18CCE4989225F80386FF39D8B355CDEA2971B532F901A0555")));
+		System.out.println("TREE      : "+tree);
 		
-		//Connection connection = new Connection(hostname,port,sk,pk);
-		//new IterationLoop(connection); 
+		Connection connection = new Connection(hostname,port,sk,pk);
+		new IterationLoop(connection); 
 	}
 }
