@@ -1,4 +1,6 @@
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -31,10 +33,6 @@ public class Block {
 	}
 
 	public Block(byte[] receivedMessage) { 
-		if(!Arrays.equals(Arrays.copyOfRange(receivedMessage,0,2),new byte[] {(byte)0x00,(byte)0x02})) {
-			System.out.println(); // throw exception ?
-			return;
-		}
 		this.level          = Utils.toInt(Arrays.copyOfRange(receivedMessage,2,6)); 
 		this.predecessor    = Arrays.copyOfRange(receivedMessage,6,38); 
 		this.timestamp      = Utils.toLong(Arrays.copyOfRange(receivedMessage,38,46));
@@ -43,6 +41,24 @@ public class Block {
 		this.signature      = Arrays.copyOfRange(receivedMessage,110,174);
 	}
 	
+
+	//////// 
+	public void verify(DataInputStream in, DataOutputStream out) throws IOException, DecoderException {
+		byte[] potentiallyFixedPredecessorFiled = verifyPredecessor(in,out);
+		System.out.println("*** field predecessor "+(potentiallyFixedPredecessorFiled!=null?"fixed = "+Utils.toHexString(potentiallyFixedPredecessorFiled):"is ok"));
+	}
+	
+	public byte[] verifyPredecessor(DataInputStream in, DataOutputStream out) throws IOException, DecoderException {
+		byte[] predecessorAsBytes = Utils.getBlockOfThisLevelFromSocket(in,out,this.level-1);
+		System.out.println("predecessor = "+new Block(predecessorAsBytes));
+		byte[] hashPredecessor = Utils.hash(predecessorAsBytes,32);
+		if(!Arrays.equals(this.predecessor,hashPredecessor)) {
+			return hashPredecessor;
+		}
+		return null;
+	}
+
+	/////// utils
 	public byte[] encodeToBytes() throws IOException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		outputStream.write(Utils.to4BytesArray(level));
@@ -63,10 +79,11 @@ public class Block {
 					 "\n  operations hash:     "+Utils.toHexString(operationsHash)+
 					 "\n  state hash:          "+Utils.toHexString(stateHash)+
 					 "\n  signature:           "+Utils.toHexString(signature)+
-					 "\n  encoded block:       "+Utils.toHexString(this.encodeToBytes());
+					 "\n  encoded block:       "+Utils.toHexString(this.encodeToBytes())+
+					 "\n  hash of this block:  "+Utils.toHexString(Utils.hash(this.encodeToBytes(),32));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			return null;
+			return "";
 	}
 }

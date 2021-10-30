@@ -21,12 +21,21 @@ import org.bouncycastle.crypto.signers.Ed25519Signer;
 import ove.crypto.digest.Blake2b;
 
 public class Utils {
+	public static final int GET_CURRENT_HEAD     = 1;
+	public static final int CURRENT_HEAD         = 2;
+	public static final int GET_BLOCK            = 3;
+	public static final int BLOCK                = 4;
+	public static final int GET_BLOCK_OPERATIONS = 5;
+	public static final int BLOCK_OPERATIONS     = 6;
+	public static final int GET_BLOCK_STATE      = 7;
+	public static final int BLOCK_STATE          = 8;
+	public static final int INJECT_OPERATION     = 9;
 
 	///////// crypto
-	public static byte[] hash(byte[] valeurToHash, int hashParamNbBytes) { // TME 1
+	public static byte[] hash(byte[] valueToHash, int hashParamNbBytes) { // TME 1
 		Blake2b.Param param = new Blake2b.Param().setDigestLength(hashParamNbBytes);
 		final Blake2b blake2b = Blake2b.Digest.newInstance(param);        
-		return blake2b.digest(valeurToHash);
+		return blake2b.digest(valueToHash);
 	}
 	
 	public static byte[] signature(byte[] msgToSign, String skString) throws DecoderException, DataLengthException, CryptoException {
@@ -51,11 +60,32 @@ public class Utils {
 		return hashOfTwoHashes;
 	}	
 
+
 	//////// socket
+	public static Block getCurrentBlockFromSocket(DataInputStream in,DataOutputStream out) throws IOException, DecoderException { 
+		Utils.sendToSocket(Utils.GET_CURRENT_HEAD,out,"GET_CURRENT_HEAD");
+		Block block = new Block(Utils.getFromSocket(174,in,"curr block"));
+		return block;
+	}
+	
+	public static byte[] getBlockOfThisLevelFromSocket(DataInputStream in,DataOutputStream out, int level) throws IOException, DecoderException { 
+		if(level<0)
+			return null; //
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		outputStream.write(Utils.to2BytesArray(Utils.GET_BLOCK));
+		outputStream.write(Utils.to4BytesArray(level));
+		byte msgToSend[] = outputStream.toByteArray();
+		Utils.sendToSocket(msgToSend,out,"GET_BLOCK "+level);
+		byte[] receivedMessage = Utils.getFromSocket(174,in,"block level "+level);
+		byte[] predecessorAsBytes = Arrays.copyOfRange(receivedMessage,0,172);
+		return predecessorAsBytes;
+	}
+
+
 	static byte[] getFromSocket(int nbBytesWanted, DataInputStream in, String comment) throws IOException {
 		byte[] result = new byte[nbBytesWanted];
 		int nbBytesReceived = in.read(result,0,nbBytesWanted); 
-		System.out.printf("%s received: %d bytes %s\n",(comment==""?"":comment),nbBytesReceived,new String(Hex.encodeHex(result)));
+		System.out.printf("RECEIVED %s (%d bytes) : %s\n",(comment==""?"":comment),nbBytesReceived,new String(Hex.encodeHex(result)));
 		//System.out.println((comment==""?"":comment+" ")+"received: "+ nbBytesReceived+ " bytes " + new String(Hex.encodeHex(result)));
 		return result;
 	}	
@@ -64,14 +94,6 @@ public class Utils {
 		return getFromSocket(nbBytesWanted,in,"");
 	}
 	
-	static void sendToSocket(String stringToSend, DataOutputStream out) throws IOException, DecoderException {
-		sendToSocket(toBytesArray(stringToSend),out,"");
-	}
-	
-	static void sendToSocket(String stringToSend, DataOutputStream out, String comment) throws IOException, DecoderException {
-		sendToSocket(toBytesArray(stringToSend),out,comment);
-	}
-
 	static void sendToSocket(int tagToSend, DataOutputStream out, String comment) throws IOException, DecoderException {
 		sendToSocket(to2BytesArray(tagToSend),out,comment);
 	}
@@ -80,6 +102,14 @@ public class Utils {
 		sendToSocket(to2BytesArray(tagToSend),out,"");
 	}
 
+	static void sendToSocket(String str, DataOutputStream out, String comment) throws IOException, DecoderException {
+		sendToSocket(toBytesArray(str),out,comment);
+	}
+
+	static void sendToSocket(String str, DataOutputStream out) throws IOException, DecoderException {
+		sendToSocket(toBytesArray(str),out,"");
+	}
+	
 	static void sendToSocket(byte[] bytesArrayToSend, DataOutputStream out) throws IOException, DecoderException {
 		sendToSocket(bytesArrayToSend,out,"");
 	}
@@ -90,8 +120,8 @@ public class Utils {
 		outputStream.write(bytesArrayToSend);
 		bytesArrayToSend = outputStream.toByteArray(); 
 		out.write(bytesArrayToSend); 
-		out.flush(); // binome
-		System.out.printf("%s sent: %s\n",(comment==""?"":comment),toHexString(bytesArrayToSend));
+		out.flush(); 
+		System.out.printf("SENT     %s : %s\n",(comment==""?"":comment),toHexString(bytesArrayToSend));
 	}
 
 	
