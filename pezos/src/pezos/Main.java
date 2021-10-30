@@ -1,6 +1,7 @@
 package pezos;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
@@ -22,23 +23,14 @@ public class Main {
 		String sk       = "1f06949f1278fcbc0590991180d5b567d240c0b0576d1d34cad66db49d4eea4a"; // secret
 		Connection connection = new Connection(hostname,port,sk,pk);
 		System.out.println("###########");
-		new IterationLoop(connection); 
-		/*Interaction inter = new Interaction();
+		//new IterationLoop(connection); 
+		Interaction inter = new Interaction();
 		Scanner myObj = new Scanner(System.in);
 		System.out.println("Donnez le tag souhaité : ");
 	    int tag = myObj.nextInt();
 	    byte[] reponse = inter.tagCall(tag, connection.getOut(), connection.getIn());
 	    Block blockAsObjet = new Block(reponse);
 		System.out.println(blockAsObjet);
-		/*String[] a = new String[2];
-		a[0] = "lo";
-		a[1] = "u";
-		String[] b = new String[3];
-		b[0] = "lo";
-		b[1] = "u";
-		b[2] = "u";
-		String[] res = inter.concatTwoArrays(a, b);
-		System.out.println(res);*/
 	}
 
 }

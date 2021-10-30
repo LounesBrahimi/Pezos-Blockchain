@@ -28,7 +28,7 @@ public class IterationLoop {
 			byte[] blockAsBytes = util.getFromSocket(174,in,"block"); // receivedMessage = 174 bytes = 2 tag + 172 block, no size 2 bytes
 			Block blockAsObjet = new Block(blockAsBytes);
 			System.out.println("#### ici 2 ######");
-			//System.out.println("#print the block in loop#\n"+blockAsObjet);
+			System.out.println("#print the block in loop#\n"+blockAsObjet);
 			System.out.println("#### ici 3s ######");
 			
 			TimeUnit.MINUTES.sleep(1);

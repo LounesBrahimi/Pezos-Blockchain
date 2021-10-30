@@ -55,5 +55,14 @@ public class Connection {
 		return in;
 	}
 	
+	public void closeConnection(Socket socket) {
+		Runtime.getRuntime().addShutdownHook(new Thread(){public void run(){
+	    try {
+	        socket.close();
+	        System.out.println("The server is shut down!");
+	    } catch (IOException e) {  }
+		}});
+	}
+	
 	
 }
