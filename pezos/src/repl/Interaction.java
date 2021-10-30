@@ -86,7 +86,7 @@ public class Interaction {
 	        util.sendToSocket(msg,out,"tag 3");
 	        byte[] blockAsBytes = util.getFromSocket(174,in,"block");
 	        Block blockAsObjet = new Block(blockAsBytes);
-	        System.out.println(Arrays.areEqual(PredecessorInBlock, blockAsObjet.getPredecessor()));
+	        System.out.println(Arrays.areEqual(PredecessorInBlock, blockAsObjet.getHashCurrentBlock()));
 	 }
 	 
 	 public void verifyTimeStamp(int level, long timeStamp, DataOutputStream out, DataInputStream  in) throws IOException, org.apache.commons.codec.DecoderException {

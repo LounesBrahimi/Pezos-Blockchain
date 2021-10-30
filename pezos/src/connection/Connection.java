@@ -59,8 +59,8 @@ public class Connection {
 		    Block blockAsObjet = new Block(reponse);
 			System.out.println(blockAsObjet);
 			System.out.println("=======Verif predecessor============");
-			//inter.verifyPredecessorValue(blockAsObjet.getLevel()-1, blockAsObjet.getPredecessor(), this.out, this.in);
-			inter.verifyTimeStamp(blockAsObjet.getLevel()-1, blockAsObjet.getTimeStamp(), out, in);
+			inter.verifyPredecessorValue(blockAsObjet.getLevel()-1, blockAsObjet.getPredecessor(), this.out, this.in);
+			//inter.verifyTimeStamp(blockAsObjet.getLevel()-1, blockAsObjet.getTimeStamp(), out, in);
 			System.out.println("========================");
 			
 		//s	byte[] msg = util.to2BytesArray(3);

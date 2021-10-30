@@ -16,6 +16,7 @@ public class Block {
 	private byte[] operationsHash;
 	private byte[] stateHash;
 	private byte[] signature;
+	private byte[] hashCurrentBlock;
 	private Utils util;
 	
 	public Block(int level, byte[] predecessor, long timestamp, byte[] operationsHash, byte[] stateHash, byte[] signature) {
@@ -41,7 +42,7 @@ public class Block {
 	/*
 	 * Constuit un block depuis le message reçu
 	 * */
-	public Block(byte[] receivedMessage) { 
+	public Block(byte[] receivedMessage) throws IOException { 
 		this.util = new Utils();
         this.level          = util.toInt(Arrays.copyOfRange(receivedMessage,2,6)); 
         this.predecessor    = Arrays.copyOfRange(receivedMessage,6,38); 
@@ -49,6 +50,7 @@ public class Block {
         this.operationsHash = Arrays.copyOfRange(receivedMessage,46,78);
         this.stateHash      = Arrays.copyOfRange(receivedMessage,78,110);
         this.signature      = Arrays.copyOfRange(receivedMessage,110,174);
+        this.hashCurrentBlock = util.hash(this.encodeToBytes(), 32);
     }
 	
 	/*
@@ -92,5 +94,9 @@ public class Block {
 	
 	public long getTimeStamp() {
 		return this.timestamp;
+	}
+	
+	public byte[] getHashCurrentBlock() {
+		return this.hashCurrentBlock;
 	}
 }
