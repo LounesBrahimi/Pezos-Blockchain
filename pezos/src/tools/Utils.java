@@ -1,5 +1,10 @@
 package tools;
 
+import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -42,7 +47,7 @@ public class Utils {
 	/*
 	 * Convertie un String en un tableau de bytess
 	 * */
-	static byte[] toBytesArray(String str) throws DecoderException {
+	public static byte[] toBytesArray(String str) throws DecoderException {
 		return Hex.decodeHex(str.toCharArray());
 	}
 	
@@ -121,4 +126,63 @@ public class Utils {
 		return signature;
 	}
 	
+	/*
+	 * Convert String Date to a long of seconds
+	 * */
+	public long toDateAsSeconds(String dateAsString) throws ParseException { 
+		DateTimeFormatter formatter     = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.of("UTC")); 
+		LocalDateTime     localDateTime = LocalDateTime.parse(dateAsString, formatter);
+		return localDateTime.atZone(ZoneId.of("UTC")).toEpochSecond(); 
+	}
+	
+	/*
+	 * Convertie un tableau de bytes en entier
+	 * */
+	public int toInt(byte[] bytes) {
+	    return bytes[0] << 24 | (bytes[1] & 0xFF) << 16 | (bytes[2] & 0xFF) << 8 | (bytes[3] & 0xFF);
+	}
+
+	
+	/*
+	 * Convertie un tableau de bytes en long
+	 * */
+	public long toLong(byte[] bytes) {
+	    return ByteBuffer.wrap(bytes).getLong();
+	}
+	
+	/*
+	 *  Convertie un entier en un tableau de 4 bytes
+	 * */
+	public byte[] to4BytesArray(int int4bytes) {
+		ByteBuffer convertedToBytes = ByteBuffer.allocate(4);
+		convertedToBytes.putInt(int4bytes);
+		return convertedToBytes.array();
+	}
+	
+	/*
+	 *  Convertie un entier en un tableau de 8 bytes
+	 * */
+	public byte[] to8BytesArray(long long64bits) { 
+		ByteBuffer convertedToBytes = ByteBuffer.allocate(8);
+		convertedToBytes.putLong(long64bits);
+		return convertedToBytes.array();
+	}
+	
+	/*
+	 * Convertie un entier en hexadecimale
+	 * */
+	public String toStringOfHex(int n) {
+		return toHexString(to4BytesArray(n));
+	}
+	
+	/*
+	 * onvertie des secondes sous format entier long en String sous format
+	 * yyyy-MM-dd HH:mm:ss.
+	 * */
+	public String toDateAsString(long seconds) { 
+		LocalDateTime     dateTime      = LocalDateTime.ofEpochSecond(seconds, 0, ZoneOffset.UTC);
+		DateTimeFormatter formatter     = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		String            formattedDate = dateTime.format(formatter);
+		return formattedDate.toString();
+	}
 }
