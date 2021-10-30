@@ -77,7 +77,7 @@ public class Utils {
 		byte msgToSend[] = outputStream.toByteArray();
 		Utils.sendToSocket(msgToSend,out,"GET_BLOCK "+level);
 		byte[] receivedMessage = Utils.getFromSocket(174,in,"block level "+level);
-		byte[] predecessorAsBytes = Arrays.copyOfRange(receivedMessage,0,172);
+		byte[] predecessorAsBytes = Arrays.copyOfRange(receivedMessage,2,174);
 		return predecessorAsBytes;
 	}
 

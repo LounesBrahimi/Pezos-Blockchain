@@ -33,12 +33,22 @@ public class Block {
 	}
 
 	public Block(byte[] receivedMessage) { 
-		this.level          = Utils.toInt(Arrays.copyOfRange(receivedMessage,2,6)); 
-		this.predecessor    = Arrays.copyOfRange(receivedMessage,6,38); 
-		this.timestamp      = Utils.toLong(Arrays.copyOfRange(receivedMessage,38,46));
-		this.operationsHash = Arrays.copyOfRange(receivedMessage,46,78);
-		this.stateHash      = Arrays.copyOfRange(receivedMessage,78,110);
-		this.signature      = Arrays.copyOfRange(receivedMessage,110,174);
+		if(receivedMessage.length==174) {
+			this.level          = Utils.toInt(Arrays.copyOfRange(receivedMessage,2,6)); 
+			this.predecessor    = Arrays.copyOfRange(receivedMessage,6,38); 
+			this.timestamp      = Utils.toLong(Arrays.copyOfRange(receivedMessage,38,46));
+			this.operationsHash = Arrays.copyOfRange(receivedMessage,46,78);
+			this.stateHash      = Arrays.copyOfRange(receivedMessage,78,110);
+			this.signature      = Arrays.copyOfRange(receivedMessage,110,174);
+		}
+		else if(receivedMessage.length==172) {
+			this.level          = Utils.toInt(Arrays.copyOfRange(receivedMessage,0,4)); 
+			this.predecessor    = Arrays.copyOfRange(receivedMessage,4,36); 
+			this.timestamp      = Utils.toLong(Arrays.copyOfRange(receivedMessage,36,44));
+			this.operationsHash = Arrays.copyOfRange(receivedMessage,44,76);
+			this.stateHash      = Arrays.copyOfRange(receivedMessage,76,108);
+			this.signature      = Arrays.copyOfRange(receivedMessage,108,172);
+		}
 	}
 	
 
@@ -52,9 +62,8 @@ public class Block {
 		byte[] predecessorAsBytes = Utils.getBlockOfThisLevelFromSocket(in,out,this.level-1);
 		System.out.println("predecessor = "+new Block(predecessorAsBytes));
 		byte[] hashPredecessor = Utils.hash(predecessorAsBytes,32);
-		if(!Arrays.equals(this.predecessor,hashPredecessor)) {
+		if(!Arrays.equals(this.predecessor,hashPredecessor)) 
 			return hashPredecessor;
-		}
 		return null;
 	}
 
