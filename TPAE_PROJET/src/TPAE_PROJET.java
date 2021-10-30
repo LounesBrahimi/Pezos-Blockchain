@@ -1,5 +1,6 @@
 // fermer la connection ?
 // TCP keepalives ?
+// 9 monutes à la palce de 10 ?
 
 import java.io.IOException;
 import java.text.ParseException;
