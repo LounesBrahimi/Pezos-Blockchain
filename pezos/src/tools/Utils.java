@@ -76,6 +76,7 @@ public class Utils {
 		bytesArrayToSend = outputStream.toByteArray(); 
 		out.write(bytesArrayToSend); 
 		out.flush(); // binome !
+		System.out.println("taille : "+bytesArrayToSend.length+ ": "+ toHexString(bytesArrayToSend));
 		System.out.println((comment==""?"":comment+" ")+"sent: "+toHexString(bytesArrayToSend));
 		System.out.println("#### ici 1######");
 	}

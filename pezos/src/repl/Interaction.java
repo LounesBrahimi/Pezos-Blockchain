@@ -52,11 +52,11 @@ public class Interaction {
 	public byte[] tag3call(DataOutputStream out, DataInputStream  in) throws org.apache.commons.codec.DecoderException, IOException {
 		Scanner myObj = new Scanner(System.in);
 		System.out.println("Donnez le level souhaité : ");
-	    String level = myObj.nextLine();
-	    byte[] levelBytes = this.util.toBytesArray(level);
+	    int level = myObj.nextInt();
+	    byte[] levelBytes = this.util.to4BytesArray(level);
 	    
 	    // communacation avec le serveur
-        byte[] msg = { (byte)0x00, (byte)0x11 };
+        byte[] msg = util.to2BytesArray(3);
         msg = concatTwoArrays(msg, levelBytes);
         util.sendToSocket(msg,out,"tag 3");
         byte[] blockAsBytes3 = util.getFromSocket(174,in,"block");
@@ -66,8 +66,7 @@ public class Interaction {
 	 public byte[] tagCall (int tag, DataOutputStream out, DataInputStream  in) throws IOException, DecoderException, org.apache.commons.codec.DecoderException{
 			switch(tag){
 	            case 1 :
-	                byte[] msg = { (byte)0x00, (byte)0x01 };
-	                msg = util.to2BytesArray(1);
+	                byte[] msg = util.to2BytesArray(1);
 	                util.sendToSocket(msg,out,"tag 1");
 	                byte[] blockAsBytes = util.getFromSocket(174,in,"block");
 	                return blockAsBytes;

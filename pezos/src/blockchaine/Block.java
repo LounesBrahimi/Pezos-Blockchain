@@ -42,10 +42,10 @@ public class Block {
 	 * */
 	public Block(byte[] receivedMessage) { 
 		this.util = new Utils();
-		if(!Arrays.equals(Arrays.copyOfRange(receivedMessage,0,2),new byte[] {(byte)0x00,(byte)0x02})) {
-            System.out.println(); // throw exception ?
+	/*	if(!Arrays.equals(Arrays.copyOfRange(receivedMessage,0,2),new byte[] {(byte)0x00,(byte)0x02})) {
+            System.out.println("#####erreur#####"); // throw exception ?
             return;
-        }
+        }*/
         this.level          = util.toInt(Arrays.copyOfRange(receivedMessage,2,6)); 
         this.predecessor    = Arrays.copyOfRange(receivedMessage,6,38); 
         this.timestamp      = util.toLong(Arrays.copyOfRange(receivedMessage,38,46));
