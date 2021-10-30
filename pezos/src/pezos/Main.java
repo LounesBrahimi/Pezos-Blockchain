@@ -19,7 +19,7 @@ public class Main {
 		String sk       = "1f06949f1278fcbc0590991180d5b567d240c0b0576d1d34cad66db49d4eea4a"; // secret
 		Connection connection = new Connection(hostname,port,sk,pk);
 		System.out.println("###########");
-		//new IterationLoop(connection); 
+		new IterationLoop(connection); 
 	}
 
 }

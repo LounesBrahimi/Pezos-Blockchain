@@ -41,17 +41,18 @@ public class Block {
 	 * Constuit un block depuis le message reçu
 	 * */
 	public Block(byte[] receivedMessage) { 
+		this.util = new Utils();
 		if(!Arrays.equals(Arrays.copyOfRange(receivedMessage,0,2),new byte[] {(byte)0x00,(byte)0x02})) {
-			System.out.println("Error#######");
-			return;
-		}
-		this.level          = util.toInt(Arrays.copyOfRange(receivedMessage,2,6)); 
-		this.predecessor    = Arrays.copyOfRange(receivedMessage,6,38); 
-		this.timestamp      = util.toLong(Arrays.copyOfRange(receivedMessage,38,46));
-		this.operationsHash = Arrays.copyOfRange(receivedMessage,46,78);
-		this.stateHash      = Arrays.copyOfRange(receivedMessage,78,110);
-		this.signature      = Arrays.copyOfRange(receivedMessage,110,174);
-	}
+            System.out.println(); // throw exception ?
+            return;
+        }
+        this.level          = util.toInt(Arrays.copyOfRange(receivedMessage,2,6)); 
+        this.predecessor    = Arrays.copyOfRange(receivedMessage,6,38); 
+        this.timestamp      = util.toLong(Arrays.copyOfRange(receivedMessage,38,46));
+        this.operationsHash = Arrays.copyOfRange(receivedMessage,46,78);
+        this.stateHash      = Arrays.copyOfRange(receivedMessage,78,110);
+        this.signature      = Arrays.copyOfRange(receivedMessage,110,174);
+    }
 	
 	/*
 	 * Encode le block structuré par les différent attributs en une suite de bytes
