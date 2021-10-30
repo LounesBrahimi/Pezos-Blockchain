@@ -8,32 +8,37 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import org.apache.commons.codec.DecoderException;
+import org.bouncycastle.crypto.CryptoException;
+import org.bouncycastle.crypto.DataLengthException;
+
+import tools.Utils;
+
 /*
  * Communication with the server
  * */
 
 public class Connection {
 	
-	public Connection(String hostname, int port, String skString, String pkString) throws UnknownHostException, IOException {
+	public Connection(String hostname, int port, String skString, String pkString) throws UnknownHostException, IOException, DecoderException, DataLengthException, CryptoException {
 
 			Socket socket = new Socket(hostname, port); 
 			DataInputStream  in	= new DataInputStream (new BufferedInputStream (socket.getInputStream ()));
 			DataOutputStream out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 			
-			////// 1st message = seed
-			byte[] seed = Utils.getFromSocket(24,this.in,"seed"); 
-			//seed = Utils.toBytesArray("12230025a6118122e9eac8785c74193819441fe57fec4845"); System.out.println("seed = "+Utils.toStringOfHex(seed));
+			Utils util = new Utils();
+			
+			// recupere le 1er message : seed
+			byte[] seed = util.getFromSocket(24,in,"seed"); 
 
-			/////// 2nd message = pk
-			Utils.sendToSocket (pkString,this.out,"pk");
+			// envoie la clé public : pk
+			util.sendToSocket (pkString,out,"pk");
 
-			/////// 3d message = signature of hashSeed
-			byte[] hashSeed = Utils.hash(seed, 32);
-			byte[] signature = Utils.signature(hashSeed, skString);
-			//System.out.println("hashSeed  = " + Utils.toStringOfHex(hashSeed ));
-			//System.out.println("signature = " + Utils.toStringOfHex(signature));
-			Utils.sendToSocket(signature,this.out,"signature");
+			// envoie du 3eme message "la graine hashé et signé"
+			byte[] hashSeed = util.hash(seed, 32);
+			byte[] signature = util.signature(hashSeed, skString);
+
+			util.sendToSocket(signature,out,"signature");
 		} 
-	
 	// fermer a la fin les ports et flux.
 }
