@@ -1,5 +1,6 @@
 package repl;
 
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -17,7 +18,7 @@ import tools.Utils;
 
 public class Interaction {
 
-	private Utils util;
+	private Utils util;	
 	
 	public Interaction() {
 		this.util = new Utils();
@@ -27,19 +28,6 @@ public class Interaction {
 		int sizeA = a.length;
 		int sizeB = b.length;
 		byte[] res = new byte[sizeA + sizeB];
-		for (int i = 0; i < a.length; i++) {
-			res[i] = a[i];
-		}
-		for (int i = a.length, j = 0; j < b.length && i  < res.length; i++, j++) {
-			res[i] = b[j];
-		}
-		return res;
-	}
-	
-	public String[] concatTwoArrays(String[] a, String[] b) {
-		int sizeA = a.length;
-		int sizeB = b.length;
-		String[] res = new String[sizeA + sizeB];
 		for (int i = 0; i < a.length; i++) {
 			res[i] = a[i];
 		}
@@ -91,4 +79,16 @@ public class Interaction {
 	            return null;
 	        }
 	    }
+	 
+	 public void verifyPredecessorValue(byte[] level, byte[] PredecessorInBlock, DataOutputStream out, DataInputStream  in) throws IOException, org.apache.commons.codec.DecoderException {
+	        byte[] msg = util.to2BytesArray(3);
+	        msg = concatTwoArrays(msg, level);
+	        util.sendToSocket(msg,out,"tag 3");
+	        byte[] blockAsBytes = util.getFromSocket(174,in,"block");
+	        Block blockAsObjet = new Block(blockAsBytes);
+	        System.out.println(Arrays.areEqual(PredecessorInBlock, blockAsObjet.getPredecessor()));
+	 }
+	 
+	 
+	 
 }

@@ -58,6 +58,9 @@ public class Connection {
 		    byte[] reponse = inter.tagCall(tag, this.out, this.in);
 		    Block blockAsObjet = new Block(reponse);
 			System.out.println(blockAsObjet);
+			System.out.println("=======Verif predecessor============");
+			inter.verifyPredecessorValue(blockAsObjet.getLevel(), blockAsObjet.getPredecessor(), this.out, this.in);
+			System.out.println("========================");
 			
 		//s	byte[] msg = util.to2BytesArray(3);
 			//util.sendToSocket (msg,out,"tag 12");

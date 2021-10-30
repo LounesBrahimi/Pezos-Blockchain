@@ -81,4 +81,12 @@ public class Block {
 			}
 			return null;
 	}
+	
+	public byte[] getLevel() {
+		return util.to4BytesArray(this.level);
+	}
+	
+	public byte[] getPredecessor() {
+		return this.predecessor;
+	}
 }
