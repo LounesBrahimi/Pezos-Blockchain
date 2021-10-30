@@ -57,13 +57,13 @@ public class Block {
 	public String toString() {
 			try {
 				return "BLOCK:"+
-					 "\n  level:           "+level+ " (or "+Utils.toStringOfHex(level) +" as Hex)"+
-					 "\n  predecessor:     "+Utils.toHexString(predecessor)+
-					 "\n  timestamp:       "+(Utils.toDateAsString(timestamp)+" (="+timestamp+" sec)")+
-					 "\n  operations hash: "+Utils.toHexString(operationsHash)+
-					 "\n  state hash:      "+Utils.toHexString(stateHash)+
-					 "\n  signature:       "+Utils.toHexString(signature)+
-					 "\n  encoded block:   "+Utils.toHexString(this.encodeToBytes());
+					 "\n  level:               "+level+ " (or "+Utils.toStringOfHex(level) +" as Hex)"+
+					 "\n  predecessor:         "+Utils.toHexString(predecessor)+
+					 "\n  timestamp:           "+(Utils.toDateAsString(timestamp)+" (="+timestamp+" sec)")+
+					 "\n  operations hash:     "+Utils.toHexString(operationsHash)+
+					 "\n  state hash:          "+Utils.toHexString(stateHash)+
+					 "\n  signature:           "+Utils.toHexString(signature)+
+					 "\n  encoded block:       "+Utils.toHexString(this.encodeToBytes());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

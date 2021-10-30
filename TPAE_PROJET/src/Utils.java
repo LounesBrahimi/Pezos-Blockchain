@@ -55,7 +55,8 @@ public class Utils {
 	static byte[] getFromSocket(int nbBytesWanted, DataInputStream in, String comment) throws IOException {
 		byte[] result = new byte[nbBytesWanted];
 		int nbBytesReceived = in.read(result,0,nbBytesWanted); 
-		System.out.println((comment==""?"":comment+" ")+"received: "+ nbBytesReceived+ " bytes " + new String(Hex.encodeHex(result)));
+		System.out.printf("%s received: %d bytes %s\n",(comment==""?"":comment),nbBytesReceived,new String(Hex.encodeHex(result)));
+		//System.out.println((comment==""?"":comment+" ")+"received: "+ nbBytesReceived+ " bytes " + new String(Hex.encodeHex(result)));
 		return result;
 	}	
 	
@@ -71,6 +72,14 @@ public class Utils {
 		sendToSocket(toBytesArray(stringToSend),out,comment);
 	}
 
+	static void sendToSocket(int tagToSend, DataOutputStream out, String comment) throws IOException, DecoderException {
+		sendToSocket(to2BytesArray(tagToSend),out,comment);
+	}
+
+	static void sendToSocket(int tagToSend, DataOutputStream out) throws IOException, DecoderException {
+		sendToSocket(to2BytesArray(tagToSend),out,"");
+	}
+
 	static void sendToSocket(byte[] bytesArrayToSend, DataOutputStream out) throws IOException, DecoderException {
 		sendToSocket(bytesArrayToSend,out,"");
 	}
@@ -81,8 +90,8 @@ public class Utils {
 		outputStream.write(bytesArrayToSend);
 		bytesArrayToSend = outputStream.toByteArray(); 
 		out.write(bytesArrayToSend); 
-		out.flush(); // binome !
-		System.out.println((comment==""?"":comment+" ")+"sent: "+toHexString(bytesArrayToSend));
+		out.flush(); // binome
+		System.out.printf("%s sent: %s\n",(comment==""?"":comment),toHexString(bytesArrayToSend));
 	}
 
 	
