@@ -2,13 +2,16 @@ package pezos;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Scanner;
 
 import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DataLengthException;
 
+import blockchaine.Block;
 import blockchaine.IterationLoop;
 import connection.Connection;
+import repl.Interaction;
 
 public class Main {
 
@@ -20,6 +23,22 @@ public class Main {
 		Connection connection = new Connection(hostname,port,sk,pk);
 		System.out.println("###########");
 		new IterationLoop(connection); 
+		/*Interaction inter = new Interaction();
+		Scanner myObj = new Scanner(System.in);
+		System.out.println("Donnez le tag souhaité : ");
+	    int tag = myObj.nextInt();
+	    byte[] reponse = inter.tagCall(tag, connection.getOut(), connection.getIn());
+	    Block blockAsObjet = new Block(reponse);
+		System.out.println(blockAsObjet);
+		/*String[] a = new String[2];
+		a[0] = "lo";
+		a[1] = "u";
+		String[] b = new String[3];
+		b[0] = "lo";
+		b[1] = "u";
+		b[2] = "u";
+		String[] res = inter.concatTwoArrays(a, b);
+		System.out.println(res);*/
 	}
 
 }
