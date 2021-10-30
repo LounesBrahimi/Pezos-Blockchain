@@ -54,17 +54,28 @@ public class Block {
 
 	//////// 
 	public void verify(DataInputStream in, DataOutputStream out) throws IOException, DecoderException {
-		byte[] potentiallyFixedPredecessorFiled = verifyPredecessor(in,out);
-		System.out.println("*** field predecessor "+(potentiallyFixedPredecessorFiled!=null?"fixed = "+Utils.toHexString(potentiallyFixedPredecessorFiled):"is ok"));
+		byte[] potentiallyFixedPredecessorFiled = verifyPredecessor(in,out); // null or the fixed value
+		System.out.println("*** field predecessor "+(potentiallyFixedPredecessorFiled!=null?"to fix -> "+Utils.toHexString(potentiallyFixedPredecessorFiled):"is ok"));
+		long potentiallyFixedTimestamp = verifyTimestamp(in,out);
+		System.out.println("*** field timestamp "+(potentiallyFixedTimestamp!=0?"to fix -> "+Utils.toDateAsString(potentiallyFixedTimestamp):"is ok"));
 	}
 	
 	public byte[] verifyPredecessor(DataInputStream in, DataOutputStream out) throws IOException, DecoderException {
 		byte[] predecessorAsBytes = Utils.getBlockOfThisLevelFromSocket(in,out,this.level-1);
 		System.out.println("predecessor = "+new Block(predecessorAsBytes));
-		byte[] hashPredecessor = Utils.hash(predecessorAsBytes,32);
-		if(!Arrays.equals(this.predecessor,hashPredecessor)) 
-			return hashPredecessor;
-		return null;
+		byte[] hashOfReceivedPredecessor  = Utils.hash(predecessorAsBytes,32);
+		if(!Arrays.equals(this.predecessor,hashOfReceivedPredecessor)) 
+			return hashOfReceivedPredecessor;
+		return null; // no correction
+	}
+
+	public long verifyTimestamp(DataInputStream in, DataOutputStream out) throws IOException, DecoderException {
+		byte[] predecessorAsBytes = Utils.getBlockOfThisLevelFromSocket(in,out,this.level-1);
+		Block predecessor = new Block(predecessorAsBytes);
+		long receivedTimestamp = predecessor.timestamp;
+		if(this.timestamp-receivedTimestamp<600) // 10 minutes 
+			return this.timestamp-600;
+		return 0; // no correction
 	}
 
 	/////// utils
