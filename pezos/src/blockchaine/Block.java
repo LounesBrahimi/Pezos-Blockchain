@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 
 public class Block {
 
@@ -42,10 +43,6 @@ public class Block {
 	 * */
 	public Block(byte[] receivedMessage) { 
 		this.util = new Utils();
-	/*	if(!Arrays.equals(Arrays.copyOfRange(receivedMessage,0,2),new byte[] {(byte)0x00,(byte)0x02})) {
-            System.out.println("#####erreur#####"); // throw exception ?
-            return;
-        }*/
         this.level          = util.toInt(Arrays.copyOfRange(receivedMessage,2,6)); 
         this.predecessor    = Arrays.copyOfRange(receivedMessage,6,38); 
         this.timestamp      = util.toLong(Arrays.copyOfRange(receivedMessage,38,46));
@@ -77,7 +74,8 @@ public class Block {
 					 "\n  operations hash: "+util.toHexString(operationsHash)+
 					 "\n  state hash:      "+util.toHexString(stateHash)+
 					 "\n  signature:       "+util.toHexString(signature)+
-					 "\n  encoded block:   "+util.toHexString(this.encodeToBytes());
+					 "\n  encoded block:   "+util.toHexString(this.encodeToBytes())+
+					 "\n  le has du block:   "+util.toHexString(util.hash(this.encodeToBytes(), 32));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
