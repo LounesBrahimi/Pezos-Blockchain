@@ -68,7 +68,7 @@ public class Connection {
 		    	lop.extractAllOperations(reponse);
 		    	HachOfOperations hashOps = new HachOfOperations(lop.getListOperations());
 		    	byte[] hashDesOperations = hashOps.ops_hash();
-		    	System.out.println("hash des ops : "+ util.toHexString(hashDesOperations));
+		    	//System.out.println("hash des ops : "+ util.toHexString(hashDesOperations));
 		    }
 			
 		//s	byte[] msg = util.to2BytesArray(3);

@@ -14,6 +14,8 @@ import org.bouncycastle.util.encoders.DecoderException;
 
 import blockchaine.Block;
 import connection.Connection;
+import operations.HachOfOperations;
+import operations.ListOperations;
 import tools.Utils;
 
 public class Interaction {
@@ -109,6 +111,15 @@ public class Interaction {
 	        System.out.println((timeStamp - blockAsObjet.getTimeStamp())== 600);
 	 }
 	 
-	 
-	 
+	 public void verifyHashOperations(int level, byte[] hashInBlock, DataOutputStream out, DataInputStream  in) throws IOException, org.apache.commons.codec.DecoderException {
+	        byte[] msg = util.to2BytesArray(5);
+	        msg = concatTwoArrays(msg, util.to4BytesArray(level));
+	        util.sendToSocket(msg,out,"tag 5");
+	        byte[] reponse = util.getFromSocket(1000,in,"ops");
+	        ListOperations lop = new ListOperations();
+	    	lop.extractAllOperations(reponse);
+	    	HachOfOperations hashOps = new HachOfOperations(lop.getListOperations());
+	    	byte[] hashDesOperations = hashOps.ops_hash();
+	        System.out.println(Arrays.areEqual(hashInBlock, hashDesOperations));
+	 }
 }
