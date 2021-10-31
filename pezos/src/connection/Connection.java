@@ -17,6 +17,7 @@ import org.bouncycastle.crypto.DataLengthException;
 
 import blockchaine.Account;
 import blockchaine.Block;
+import blockchaine.ListAccounts;
 import blockchaine.State;
 import operations.HachOfOperations;
 import operations.ListOperations;
@@ -75,8 +76,8 @@ public class Connection {
 		    }  else if (tag == 7) {
 		    	State state = new State();
 		    	state.extractState(reponse);
-		    	Account account = new Account();
-		    	account.extractAccount(state.getAccountsBytes());
+		    	ListAccounts lAccounts = new ListAccounts();
+		    	lAccounts.extractAllAccounts(state.getAccountsBytes());
 		    }
 
 			this.closeConnection(socket);
