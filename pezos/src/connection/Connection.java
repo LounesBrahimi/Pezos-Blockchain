@@ -16,6 +16,7 @@ import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DataLengthException;
 
 import blockchaine.Block;
+import blockchaine.State;
 import operations.HachOfOperations;
 import operations.ListOperations;
 import operations.Operation;
@@ -54,38 +55,29 @@ public class Connection {
 
 			util.sendToSocket(signature,this.out,"signature");
 			
+			// interaction avec l'utilisateur ( REPL 
 			Interaction inter = new Interaction();
 			Scanner myObj = new Scanner(System.in);
 			System.out.println("Donnez le tag souhaité : ");
 		    int tag = myObj.nextInt();
+		    
 		    byte[] reponse = inter.tagCall(tag, this.out, this.in);
+		    
 		    if (tag < 5) {
 		    	Block blockAsObjet = new Block(reponse);
 		    	System.out.println(blockAsObjet);
-		    }
-		    if (tag == 5) {
+		    }  else if (tag == 5) {
 		    	ListOperations lop = new ListOperations();
 		    	lop.extractAllOperations(reponse);
 		    	HachOfOperations hashOps = new HachOfOperations(lop.getListOperations());
 		    	byte[] hashDesOperations = hashOps.ops_hash();
-		    	//System.out.println("hash des ops : "+ util.toHexString(hashDesOperations));
+		    }  else if (tag == 7) {
+		    	State state = new State();
+		    	state.extractState(reponse);
 		    }
-			
-		//s	byte[] msg = util.to2BytesArray(3);
-			//util.sendToSocket (msg,out,"tag 12");
-			//byte[] blockAsBytes = util.getFromSocket(174,this.in,"block");
-			
-			//TimeUnit.MINUTES.sleep(1);
-			this.in.close();
-			this.out.close();
-			Runtime.getRuntime().addShutdownHook(new Thread(){public void run(){
-			    try {
-			        socket.close();
-			        System.out.println("The server is shut down!");
-			    } catch (IOException e) {  }
-				}});
+
+			this.closeConnection(socket);
 		} 
-	// fermer a la fin les ports et flux.
 
 	public DataOutputStream getOut() {
 		return out;
@@ -95,7 +87,9 @@ public class Connection {
 		return in;
 	}
 	
-	public void closeConnection(Socket socket) {
+	public void closeConnection(Socket socket) throws IOException {
+		this.in.close();
+		this.out.close();
 		Runtime.getRuntime().addShutdownHook(new Thread(){public void run(){
 	    try {
 	        socket.close();
