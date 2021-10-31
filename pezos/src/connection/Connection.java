@@ -67,6 +67,7 @@ public class Connection {
 		    
 		    if (tag < 5) {
 		    	Block blockAsObjet = new Block(reponse);
+		    	inter.verifyTimeStamp(blockAsObjet.getLevel()-1, blockAsObjet.getTimeStamp(), out, in);
 		    	System.out.println(blockAsObjet);
 		    }  else if (tag == 5) {
 		    	ListOperations lop = new ListOperations();

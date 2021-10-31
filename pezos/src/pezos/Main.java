@@ -19,5 +19,4 @@ public class Main {
 		Socket s = new Socket(hostname, port);
 		Connection connection = new Connection(hostname,port,sk,pk);
 	}
-
 }
