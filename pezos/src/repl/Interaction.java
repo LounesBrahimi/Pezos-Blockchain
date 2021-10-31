@@ -66,6 +66,18 @@ public class Interaction {
         
         return util.getFromSocket(10000,in,"block");
 	}
+
+	public byte[] tag9call(DataOutputStream out, DataInputStream  in, int ErrorTag) throws org.apache.commons.codec.DecoderException, IOException {
+        switch(ErrorTag){
+            case 1 : //BAD PREDECESSOR
+            case 2 : //BAD TIMESTAMP
+            case 3 : //BAD OPERATIONS HASH
+            case 4 : //BAD CONTEXT HASH
+            case 5 : //BAD SIGNATURE
+            default : System.out.println("wrong error tag");
+            return null;
+        }
+    }
 	
 	public byte[] tag7call(DataOutputStream out, DataInputStream  in) throws org.apache.commons.codec.DecoderException, IOException {
 		Scanner myObj = new Scanner(System.in);
