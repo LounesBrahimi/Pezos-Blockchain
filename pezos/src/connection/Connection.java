@@ -16,6 +16,7 @@ import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DataLengthException;
 
 import blockchaine.Block;
+import blockchaine.Operation;
 import repl.Interaction;
 import tools.Utils;
 
@@ -63,6 +64,9 @@ public class Connection {
 				//inter.verifyPredecessorValue(blockAsObjet.getLevel()-1, blockAsObjet.getPredecessor(), this.out, this.in);
 				//inter.verifyTimeStamp(blockAsObjet.getLevel()-1, blockAsObjet.getTimeStamp(), out, in);
 				System.out.println("========================");
+		    }
+		    if (tag == 5) {
+		    	Operation op = new Operation(reponse);
 		    }
 			
 		//s	byte[] msg = util.to2BytesArray(3);
