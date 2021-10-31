@@ -93,15 +93,19 @@ public class Operation {
 	public byte[] getContent() throws IOException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		outputStream.write(this.tagOperation);
-		outputStream.write(this.pubkey);
-		outputStream.write(this.signature);
 		if ((typeOfTag() == 1) || (typeOfTag() == 3) || (typeOfTag() == 4)) {
-			outputStream.write(this.tagOperation);
+			outputStream.write(this.hash);
+			outputStream.write(this.pubkey);
+			outputStream.write(this.signature);
 			return outputStream.toByteArray();
 		} else if (typeOfTag() == 2) {
-			outputStream.write(getTime());
+			outputStream.write(this.getTime());
+			outputStream.write(this.pubkey);
+			outputStream.write(this.signature);
 			return outputStream.toByteArray();
 		} else if (typeOfTag() == 5) {
+			outputStream.write(this.pubkey);
+			outputStream.write(this.signature);
 			return outputStream.toByteArray();
 		} else {
 			return null;

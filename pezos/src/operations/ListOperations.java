@@ -22,7 +22,7 @@ public class ListOperations {
 			receivedOperation = Arrays.copyOfRange(receivedOperation,110,receivedOperation.length);
 			extractAllOperationRec(receivedOperation);
 		} else if (op.typeOfTag() == 5) {
-			receivedOperation = Arrays.copyOfRange(receivedOperation,98,receivedOperation.length);
+			receivedOperation = Arrays.copyOfRange(receivedOperation,102,receivedOperation.length);
 			extractAllOperationRec(receivedOperation);
 		}
 	}
