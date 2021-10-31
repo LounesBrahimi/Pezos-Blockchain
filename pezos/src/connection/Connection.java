@@ -15,14 +15,14 @@ import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DataLengthException;
 
-import blockchaine.Account;
 import blockchaine.Block;
-import blockchaine.ListAccounts;
-import blockchaine.State;
 import operations.HachOfOperations;
 import operations.ListOperations;
 import operations.Operation;
 import repl.Interaction;
+import state.Account;
+import state.ListAccounts;
+import state.State;
 import tools.Utils;
 
 /*
