@@ -56,12 +56,14 @@ public class Connection {
 			System.out.println("Donnez le tag souhaité : ");
 		    int tag = myObj.nextInt();
 		    byte[] reponse = inter.tagCall(tag, this.out, this.in);
-		    Block blockAsObjet = new Block(reponse);
-			System.out.println(blockAsObjet);
-			System.out.println("=======Verif predecessor============");
-			inter.verifyPredecessorValue(blockAsObjet.getLevel()-1, blockAsObjet.getPredecessor(), this.out, this.in);
-			//inter.verifyTimeStamp(blockAsObjet.getLevel()-1, blockAsObjet.getTimeStamp(), out, in);
-			System.out.println("========================");
+		    if (tag < 5) {
+		    	Block blockAsObjet = new Block(reponse);
+		    	System.out.println(blockAsObjet);
+				System.out.println("=======Verif predecessor============");
+				//inter.verifyPredecessorValue(blockAsObjet.getLevel()-1, blockAsObjet.getPredecessor(), this.out, this.in);
+				//inter.verifyTimeStamp(blockAsObjet.getLevel()-1, blockAsObjet.getTimeStamp(), out, in);
+				System.out.println("========================");
+		    }
 			
 		//s	byte[] msg = util.to2BytesArray(3);
 			//util.sendToSocket (msg,out,"tag 12");

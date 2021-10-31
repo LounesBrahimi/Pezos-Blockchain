@@ -33,6 +33,14 @@ public class Utils {
 	public byte[] getFromSocket(int nbBytesWanted, DataInputStream in, String comment) throws IOException {
 		byte[] result = new byte[nbBytesWanted];
 		int nbBytesReceived = in.read(result,0,nbBytesWanted); 
+		if (nbBytesReceived != nbBytesWanted) {
+			byte[] result2 = new byte[nbBytesReceived];
+			for (int i = 0; i < result2.length; i++) {
+				result2[i] = result[i];
+			}
+			System.out.println("#log#"+(comment==""?"":comment+" ")+"received: "+ nbBytesReceived+ " bytes " + new String(Hex.encodeHex(result2)));
+			return  result2;
+		}
 		System.out.println("#log#"+(comment==""?"":comment+" ")+"received: "+ nbBytesReceived+ " bytes " + new String(Hex.encodeHex(result)));
 		return result;
 	}	
