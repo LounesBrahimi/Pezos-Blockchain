@@ -15,6 +15,7 @@ import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DataLengthException;
 
+import blockchaine.Account;
 import blockchaine.Block;
 import blockchaine.State;
 import operations.HachOfOperations;
@@ -74,6 +75,8 @@ public class Connection {
 		    }  else if (tag == 7) {
 		    	State state = new State();
 		    	state.extractState(reponse);
+		    	Account account = new Account();
+		    	account.extractAccount(state.getAccountsBytes());
 		    }
 
 			this.closeConnection(socket);

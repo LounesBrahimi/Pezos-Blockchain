@@ -1,15 +1,36 @@
 package blockchaine;
 
+import java.util.Arrays;
+
+import tools.Utils;
+
 public class Account {
 	
+	private byte[] userPubkey;
+	private byte[] predPez;
+	private byte[] timestampPez;
+	private byte[] operationsHashPez;
+	private byte[] contextHashPez;
+	private byte[] signaturePez;
+	private Utils util;
+	
 	public Account(){
-		
+		util = new Utils();
 	}
 	
-	private String userPubkey;
-	private int levelPez;
-	private int timestampPez;
-	private int operationsHashPez;
-	private int contextHashPez;
-	private int signaturePez;
+	public void extractAccount(byte[] accountsBytes) {
+		this.userPubkey = Arrays.copyOfRange(accountsBytes,0,32);
+		this.predPez = Arrays.copyOfRange(accountsBytes,32,36);
+		this.timestampPez = Arrays.copyOfRange(accountsBytes,36,40);
+		this.operationsHashPez = Arrays.copyOfRange(accountsBytes,40,44);
+		this.contextHashPez = Arrays.copyOfRange(accountsBytes,44,48);
+		this.signaturePez = Arrays.copyOfRange(accountsBytes,48,52);
+		System.out.println("### Account ###");
+		System.out.println("userPubkey : "+ util.toHexString(userPubkey));
+		System.out.println("predPez : "+ util.toHexString(predPez));
+		System.out.println("timestampPez : "+ util.toHexString(timestampPez));
+		System.out.println("operationsHashPez : "+ util.toHexString(operationsHashPez));
+		System.out.println("contextHashPez : "+ util.toHexString(contextHashPez));
+		System.out.println("signaturePez : "+ util.toHexString(signaturePez));
+	}
 }

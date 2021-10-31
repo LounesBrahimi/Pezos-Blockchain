@@ -26,4 +26,8 @@ public class State {
 		System.out.println("nbBytesInNextSequence : "+ util.toHexString(nbBytesInNextSequence));
 		System.out.println("accountsBytes : "+ util.toHexString(accountsBytes));
 	}
+	
+	public byte[] getAccountsBytes() {
+		return this.accountsBytes;
+	}
 }
