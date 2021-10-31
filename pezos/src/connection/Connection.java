@@ -74,6 +74,7 @@ public class Connection {
 		    	lop.extractAllOperations(reponse);
 		    	HachOfOperations hashOps = new HachOfOperations(lop.getListOperations());
 		    	byte[] hashDesOperations = hashOps.ops_hash();
+		    	System.out.println("hash calculé : "+ util.toHexString(hashDesOperations));
 		    }  else if (tag == 7) {
 		    	State state = new State();
 		    	state.extractState(reponse);
