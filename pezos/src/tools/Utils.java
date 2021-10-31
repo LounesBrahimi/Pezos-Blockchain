@@ -99,6 +99,16 @@ public class Utils {
 	}
 	
 	/*
+	 * 32 bytes of 0
+	 * */
+	public byte[] Bytes32s() { 
+		ByteBuffer convertedToBytes = ByteBuffer.allocate(32);
+		int x = 0 ;
+		convertedToBytes.putInt(x);
+		return convertedToBytes.array();
+	}
+	
+	/*
 	 * Convertie un tableau de byte en string hexadecimal
 	 * */
 	public  String toHexString(byte[] bytes) {

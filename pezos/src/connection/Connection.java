@@ -16,8 +16,9 @@ import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DataLengthException;
 
 import blockchaine.Block;
-import blockchaine.ListOperations;
-import blockchaine.Operation;
+import operations.HachOfOperations;
+import operations.ListOperations;
+import operations.Operation;
 import repl.Interaction;
 import tools.Utils;
 
@@ -61,14 +62,13 @@ public class Connection {
 		    if (tag < 5) {
 		    	Block blockAsObjet = new Block(reponse);
 		    	System.out.println(blockAsObjet);
-				System.out.println("=======Verif predecessor============");
-				//inter.verifyPredecessorValue(blockAsObjet.getLevel()-1, blockAsObjet.getPredecessor(), this.out, this.in);
-				//inter.verifyTimeStamp(blockAsObjet.getLevel()-1, blockAsObjet.getTimeStamp(), out, in);
-				System.out.println("========================");
 		    }
 		    if (tag == 5) {
 		    	ListOperations lop = new ListOperations();
 		    	lop.extractAllOperations(reponse);
+		    	HachOfOperations hashOps = new HachOfOperations(lop.getListOperations());
+		    	byte[] hashDesOperations = hashOps.ops_hash();
+		    	System.out.println("hash des ops : "+ util.toHexString(hashDesOperations));
 		    }
 			
 		//s	byte[] msg = util.to2BytesArray(3);
