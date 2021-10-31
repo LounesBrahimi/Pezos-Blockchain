@@ -1,9 +1,17 @@
 package blockchaine;
 
-public class Operation {
-	private int tag;
-	private String pubkey;
+import tools.Utils;
 
-	private byte[] hash;
+public class Operation {
+	private byte[] pubkey;
 	private byte[] signature;
+	private byte[] tagOperation;
+	private byte[] time;
+	private byte[] hash;
+	private Utils util;
+	
+	public Operation(byte[] receivedOperation) {
+		this.util = new Utils();
+		
+	}
 }

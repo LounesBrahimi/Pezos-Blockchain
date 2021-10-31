@@ -19,26 +19,6 @@ public class Block {
 	private byte[] hashCurrentBlock;
 	private Utils util;
 	
-	public Block(int level, byte[] predecessor, long timestamp, byte[] operationsHash, byte[] stateHash, byte[] signature) {
-		this.util = new Utils();
-		this.level          = level;
-		this.predecessor    = predecessor;
-		this.timestamp      = timestamp;
-		this.operationsHash = operationsHash;
-		this.stateHash      = stateHash;
-		this.signature      = signature;
-	}
-	
-	public Block(int level, String predecessor, String dateAsString, String operationsHash, String stateHash, String signature) throws DecoderException, ParseException {
-		this.util = new Utils();
-		this.level          = level;
-		this.predecessor    = util.toBytesArray(predecessor); 
-		this.timestamp      = util.toDateAsSeconds(dateAsString);
-		this.operationsHash = util.toBytesArray(operationsHash);
-		this.stateHash      = util.toBytesArray(stateHash);
-		this.signature      = util.toBytesArray(signature);
-	}
-	
 	/*
 	 * Constuit un block depuis le message reçu
 	 * */
