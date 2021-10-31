@@ -9,7 +9,7 @@ public class Operation {
 	private byte[] pubkey;
 	private byte[] signature;
 	private byte[] tagOperation;
-	private byte[] time;
+	private long time;
 	private byte[] hash;
 	private Utils util;
 	
@@ -28,6 +28,16 @@ public class Operation {
 			System.out.println("pubKey : "+ util.toHexString(this.pubkey));
 			System.out.println("signature : "+ util.toHexString(this.signature));
 			System.out.println("hash : "+ util.toHexString(this.hash));
+		} else if (typeOfTag() == 2) {
+			this.time = util.toLong(Arrays.copyOfRange(receivedOperation,102,110));
+			System.out.println("tag : "+ util.toHexString(this.tagOperation));
+			System.out.println("pubKey : "+ util.toHexString(this.pubkey));
+			System.out.println("signature : "+ util.toHexString(this.signature));
+			System.out.println("time : "+this.time+" seconds");
+		} else if (typeOfTag() == 5) {
+			System.out.println("tag : "+ util.toHexString(this.tagOperation));
+			System.out.println("pubKey : "+ util.toHexString(this.pubkey));
+			System.out.println("signature : "+ util.toHexString(this.signature));
 		}
 	}
 }
