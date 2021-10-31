@@ -64,6 +64,19 @@ public class Interaction {
         msg = concatTwoArrays(msg, levelBytes);
         util.sendToSocket(msg,out,"tag 5");
         
+        return util.getFromSocket(10000,in,"block");
+	}
+	
+	public byte[] tag7call(DataOutputStream out, DataInputStream  in) throws org.apache.commons.codec.DecoderException, IOException {
+		Scanner myObj = new Scanner(System.in);
+		System.out.println("Donnez le level souhaité : ");
+	    int level = myObj.nextInt();
+	    byte[] levelBytes = this.util.to4BytesArray(level);
+	    
+	    // communacation avec le serveur
+        byte[] msg = util.to2BytesArray(7);
+        msg = concatTwoArrays(msg, levelBytes);
+        util.sendToSocket(msg,out,"tag 7");
         return util.getFromSocket(1000,in,"block");
 	}
 	
@@ -78,16 +91,8 @@ public class Interaction {
 	            	return tag3call(out, in);
 	            case 5 :
 	            	return tag5call(out, in);
-	         /*   case 7 :
-	                System.out.println("OUI7");
-	                byte[] msg7 = { (byte)0x01, (byte)0x11 };
-	                util.sendToSocket (msg7,out,"tag 7");
-	                break;
-	            case 9 : 
-	                System.out.println("tag 9");
-	                // A REMPLIR
-	                break;*/
-
+	            case 7 :
+	            	return tag7call(out, in);
 	            default : System.out.println("error, wrong tag");
 	            return null;
 	        }
