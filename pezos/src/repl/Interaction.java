@@ -41,11 +41,11 @@ public class Interaction {
 	
 	public byte[] tag3call(DataOutputStream out, DataInputStream  in) throws org.apache.commons.codec.DecoderException, IOException {
 		Scanner myObj = new Scanner(System.in);
-		System.out.println("Donnez le level souhaité : ");
+		System.out.println("Donnez le level souhaitï¿½ : ");
 	    int level = myObj.nextInt();
 	    byte[] levelBytes = this.util.to4BytesArray(level);
 	    
-	    // communacation avec le serveur
+	    // communication avec le serveur
         byte[] msg = util.to2BytesArray(3);
         msg = concatTwoArrays(msg, levelBytes);
         util.sendToSocket(msg,out,"tag 3");
@@ -55,37 +55,25 @@ public class Interaction {
 	
 	public byte[] tag5call(DataOutputStream out, DataInputStream  in) throws org.apache.commons.codec.DecoderException, IOException {
 		Scanner myObj = new Scanner(System.in);
-		System.out.println("Donnez le level souhaité : ");
+		System.out.println("Donnez le level souhaitï¿½ : ");
 	    int level = myObj.nextInt();
 	    byte[] levelBytes = this.util.to4BytesArray(level);
 	    
-	    // communacation avec le serveur
+	    // communication avec le serveur
         byte[] msg = util.to2BytesArray(5);
         msg = concatTwoArrays(msg, levelBytes);
         util.sendToSocket(msg,out,"tag 5");
         
         return util.getFromSocket(10000,in,"block");
 	}
-
-	public byte[] tag9call(DataOutputStream out, DataInputStream  in, int ErrorTag) throws org.apache.commons.codec.DecoderException, IOException {
-        switch(ErrorTag){
-            case 1 : //BAD PREDECESSOR
-            case 2 : //BAD TIMESTAMP
-            case 3 : //BAD OPERATIONS HASH
-            case 4 : //BAD CONTEXT HASH
-            case 5 : //BAD SIGNATURE
-            default : System.out.println("wrong error tag");
-            return null;
-        }
-    }
 	
 	public byte[] tag7call(DataOutputStream out, DataInputStream  in) throws org.apache.commons.codec.DecoderException, IOException {
 		Scanner myObj = new Scanner(System.in);
-		System.out.println("Donnez le level souhaité : ");
+		System.out.println("Donnez le level souhaitï¿½ : ");
 	    int level = myObj.nextInt();
 	    byte[] levelBytes = this.util.to4BytesArray(level);
 	    
-	    // communacation avec le serveur
+	    // communication avec le serveur
         byte[] msg = util.to2BytesArray(7);
         msg = concatTwoArrays(msg, levelBytes);
         util.sendToSocket(msg,out,"tag 7");
@@ -110,6 +98,41 @@ public class Interaction {
 	        }
 	    }
 	 
+
+		//VÃ©rifications
+	
+		public void tag9call(DataOutputStream out, int ErrorTag, byte[] wrongData) throws org.apache.commons.codec.DecoderException, IOException {
+			// A TESTER
+			byte[] msg = util.to2BytesArray(9);
+			msg = concatTwoArrays(msg, util.to2BytesArray(ErrorTag));
+			msg = concatTwoArrays(msg, wrongData);
+			util.sendToSocket(msg, out);
+
+			/* Pas besoin?
+			switch(ErrorTag){
+				case 1 : //BAD PREDECESSOR 
+				// A TESTER
+					msg = concatTwoArrays(msg, util.to2BytesArray(ErrorTag));
+					msg = concatTwoArrays(msg, wrongData);
+					util.sendToSocket(msg, out);
+					break;
+				case 2 : //BAD TIMESTAMP
+				// A TESTER
+					msg = concatTwoArrays(msg, util.to2BytesArray(ErrorTag));
+					msg = concatTwoArrays(msg, wrongData);
+					util.sendToSocket(msg, out);
+					break;
+				case 3 : //BAD OPERATIONS HASH
+				// A TESTER
+					msg = concatTwoArrays(msg, util.to2BytesArray(errorTag));
+					msg = concatTwoArrays(msg, wrongData);
+				case 4 : //BAD CONTEXT HASH
+				case 5 : //BAD SIGNATURE
+				default : System.out.println("wrong error tag");
+			}*/
+		}
+
+
 	 public void verifyPredecessorValue(int level, byte[] PredecessorInBlock, DataOutputStream out, DataInputStream  in) throws IOException, org.apache.commons.codec.DecoderException {
 	        byte[] msg = util.to2BytesArray(3);
 	        msg = concatTwoArrays(msg, util.to4BytesArray(level));
@@ -117,6 +140,13 @@ public class Interaction {
 	        byte[] blockAsBytes = util.getFromSocket(174,in,"block");
 	        Block blockAsObjet = new Block(blockAsBytes);
 	        System.out.println(Arrays.areEqual(PredecessorInBlock, blockAsObjet.getHashCurrentBlock()));
+			//appel au tag 9 de correction
+			if(!(Arrays.areEqual(PredecessorInBlock, blockAsObjet.getHashCurrentBlock()))){
+				System.out.println("error found at predecessor");
+				tag9call(out, 1, PredecessorInBlock);
+			}
+			else
+				System.out.println("no error on predecessor");
 	 }
 	 
 	 public void verifyTimeStamp(int level, long timeStamp, DataOutputStream out, DataInputStream  in) throws IOException, org.apache.commons.codec.DecoderException {
@@ -126,6 +156,15 @@ public class Interaction {
 	        byte[] blockAsBytes = util.getFromSocket(174,in,"block");
 	        Block blockAsObjet = new Block(blockAsBytes);
 	        System.out.println((timeStamp - blockAsObjet.getTimeStamp())== 600);
+			//appel au tag 9 de correction
+			if((timeStamp - blockAsObjet.getTimeStamp()) == 600){
+				System.out.println("no error on timestamp");
+			}
+			else {
+				System.out.println("error on timestamp");
+				tag9call(out, 2, util.to8BytesArray(timeStamp));
+			}
+
 	 }
 	 
 	 public void verifyHashOperations(int level, byte[] hashInBlock, DataOutputStream out, DataInputStream  in) throws IOException, org.apache.commons.codec.DecoderException {
@@ -138,5 +177,14 @@ public class Interaction {
 	    	HachOfOperations hashOps = new HachOfOperations(lop.getListOperations());
 	    	byte[] hashDesOperations = hashOps.ops_hash();
 	        System.out.println(Arrays.areEqual(hashInBlock, hashDesOperations));
+
+			//appel au tag 9 de correction
+			if(Arrays.areEqual(hashInBlock, hashDesOperations)){
+				System.out.println("no error on operations hash");
+			}
+			else{
+				System.out.println("error on operations hash");
+				tag9call(out, 3, hashInBlock);
+			}
 	 }
 }
