@@ -31,8 +31,8 @@ public class State {
 		stateData = Arrays.copyOfRange(receivedMessage,2,receivedMessage.length);
 		System.out.println("dictat_pubk : "+ util.toHexString(dictateurPubkey));
 		System.out.println("predecessot_timestamp : "+ util.toHexString(predecessot_timestamp));
-		System.out.println("nbBytesInNextSequence : "+ util.toHexString(nbBytesInNextSequence));
-		System.out.println("accountsBytes : "+ util.toHexString(accountsBytes));
+		//System.out.println("nbBytesInNextSequence : "+ util.toHexString(nbBytesInNextSequence));
+		//System.out.println("accountsBytes : "+ util.toHexString(accountsBytes));
 	}
 	
 	public byte[] hashTheState() {

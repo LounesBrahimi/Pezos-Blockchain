@@ -14,9 +14,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DataLengthException;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import com.google.common.io.BaseEncoding;
 
 import blockchaine.Block;
 import operations.HachOfOperations;
@@ -28,16 +26,11 @@ import state.ListAccounts;
 import state.State;
 import tools.Utils;
 
-//import com.google.common.io.BaseEncoding;
-import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.IOException;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
+
 
 //import org.bouncycastle.jce.provider.BouncyCastleProvider
 
@@ -64,10 +57,10 @@ public class Connection {
 			// recupere le 1er message : seed
 			byte[] seed = util.getFromSocket(24,this.in,"seed"); 
 
-			// envoie la clé public : pk
+			// envoie la clï¿½ public : pk
 			util.sendToSocket (pkString,this.out,"pk");
 
-			// envoie du 3eme message "la graine hashé et signé"
+			// envoie du 3eme message "la graine hashï¿½ et signï¿½"
 			byte[] hashSeed = util.hash(seed, 32);
 			byte[] signature = util.signature(hashSeed, skString);
 
@@ -76,50 +69,34 @@ public class Connection {
 			// interaction avec l'utilisateur ( REPL 
 			Interaction inter = new Interaction();
 			Scanner myObj = new Scanner(System.in);
-			System.out.println("Donnez le tag souhaité : ");
+			System.out.println("Donnez le tag souhaitï¿½ : ");
 		    int tag = myObj.nextInt();
 		    
 		    byte[] reponse = inter.tagCall(tag, this.out, this.in);
 		    
-		    if (tag < 5) {
+		    if (tag == 1) {
 		    	Block blockAsObjet = new Block(reponse);
-		    	inter.verifyTimeStamp(blockAsObjet.getLevel()-1, blockAsObjet.getTimeStamp(), out, in);
 		    	System.out.println(blockAsObjet);
-		    	
-		    	//---------------------------------
-		    	inter.verifyStateHash(blockAsObjet.getLevel(), blockAsObjet.getStateHash(), out, in);
-		    	//---------------------------------
+				inter.verifyErrors(blockAsObjet, out, in);
+			}   else if (tag == 3) {
+				Block blockAsObjet = new Block(reponse);
+				System.out.println(blockAsObjet);
 		    }  else if (tag == 5) {
 		    	ListOperations lop = new ListOperations();
 		    	lop.extractAllOperations(reponse);
 		    	HachOfOperations hashOps = new HachOfOperations(lop.getListOperations());
 		    	byte[] hashDesOperations = hashOps.ops_hash();
-		    	System.out.println("hash calculé : "+ util.toHexString(hashDesOperations));
+		    	System.out.println("hash calculï¿½ operations : "+ util.toHexString(hashDesOperations));
 		    }  else if (tag == 7) {
 		    	State state = new State();
 		    	state.extractState(reponse);
-		    	System.out.println("hash calculé state "+util.toHexString(state.hashTheState()));
+		    	System.out.println("hash calculï¿½ state "+ util.toHexString(state.hashTheState()));
 
 		    	ListAccounts lAccounts = new ListAccounts();
 		    	lAccounts.extractAllAccounts(state.getAccountsBytes());
 		    	//---------------------------------
 				// "Verification de la signature marche ok !"
-		    	byte[] blockSouh = inter.tag3call(out, in);
-		    	Block block = new Block(blockSouh);
-				byte[] hashBlock = util.hash(block.encodeBlockWithoutSignature(), 32);
-
-		    	BouncyCastleProvider bouncyCastleProvider = new BouncyCastleProvider();
-		    	Signature signature2 = Signature.getInstance("Ed25519", bouncyCastleProvider);
 		    	
-		    	byte[] pubKeyBytes = state.getDictPK();
-		    	SubjectPublicKeyInfo pubKeyInfo = new SubjectPublicKeyInfo(
-		                new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519), pubKeyBytes);
-		    	X509EncodedKeySpec keySpec = new X509EncodedKeySpec(pubKeyInfo.getEncoded());
-		    	KeyFactory keyFactory = KeyFactory.getInstance("Ed25519", bouncyCastleProvider);
-		    	PublicKey pk = keyFactory.generatePublic(keySpec);
-		    	signature2.initVerify(pk);
-		        signature2.update(hashBlock);
-		        System.out.println("======\nVérification signature : \n"+signature2.verify(block.getSignature())+"\n===========");
 		    	//---------------------------------
 		    }
 

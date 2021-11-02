@@ -36,7 +36,7 @@ public class Block {
 	
 	
 	/*
-	 * Constuit un block depuis le message reçu
+	 * Constuit un block depuis le message reï¿½u
 	 * */
 	public Block(byte[] receivedMessage) throws IOException { 
 		this.util = new Utils();
@@ -51,7 +51,7 @@ public class Block {
     }
 	
 	/*
-	 * Encode le block structuré par les différent attributs en une suite de bytes
+	 * Encode le block structurï¿½ par les diffï¿½rent attributs en une suite de bytes
 	 * */
 	public byte[] encodeToBytes() throws IOException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -95,6 +95,10 @@ public class Block {
 	
 	public byte[] getHashCurrentBlock() {
 		return this.hashCurrentBlock;
+	}
+
+	public byte[] getOperationsHash(){
+		return this.operationsHash;
 	}
 	
 	public byte[] getStateHash() {

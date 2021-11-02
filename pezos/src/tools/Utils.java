@@ -38,10 +38,8 @@ public class Utils {
 			for (int i = 0; i < result2.length; i++) {
 				result2[i] = result[i];
 			}
-			System.out.println("#log#"+(comment==""?"":comment+" ")+"received: "+ nbBytesReceived+ " bytes " + new String(Hex.encodeHex(result2)));
 			return  result2;
 		}
-		System.out.println("#log#"+(comment==""?"":comment+" ")+"received: "+ nbBytesReceived+ " bytes " + new String(Hex.encodeHex(result)));
 		return result;
 	}	
 	
@@ -84,9 +82,7 @@ public class Utils {
 		bytesArrayToSend = outputStream.toByteArray(); 
 		out.write(bytesArrayToSend); 
 		out.flush(); // binome !
-		System.out.println("taille : "+bytesArrayToSend.length+ ": "+ toHexString(bytesArrayToSend));
 		System.out.println((comment==""?"":comment+" ")+"sent: "+toHexString(bytesArrayToSend));
-		System.out.println("#### ici 1######");
 	}
 	
 	/*
