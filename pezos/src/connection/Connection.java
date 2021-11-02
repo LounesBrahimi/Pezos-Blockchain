@@ -14,6 +14,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import com.google.common.io.BaseEncoding;
 
 import blockchaine.Block;
 import operations.HachOfOperations;
@@ -25,6 +28,19 @@ import state.ListAccounts;
 import state.State;
 import tools.Utils;
 
+//import com.google.common.io.BaseEncoding;
+import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import java.io.IOException;
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
+
+//import org.bouncycastle.jce.provider.BouncyCastleProvider
+
 /*
  * Communication with the server
  * */
@@ -34,7 +50,7 @@ public class Connection {
 	private DataOutputStream out;
 	private DataInputStream  in;
 	
-	public Connection(String hostname, int port, String skString, String pkString) throws UnknownHostException, IOException, DecoderException, DataLengthException, CryptoException, InterruptedException {
+	public Connection(String hostname, int port, String skString, String pkString) throws UnknownHostException, IOException, DecoderException, DataLengthException, CryptoException, InterruptedException, SignatureException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException {
 
 			this.in = in;
 			this.out = out;
@@ -87,6 +103,23 @@ public class Connection {
 		    	ListAccounts lAccounts = new ListAccounts();
 		    	lAccounts.extractAllAccounts(state.getAccountsBytes());
 		    	//---------------------------------
+				// "Verification de la signature marche ok !"
+		    	byte[] blockSouh = inter.tag3call(out, in);
+		    	Block block = new Block(blockSouh);
+				byte[] hashBlock = util.hash(block.encodeBlockWithoutSignature(), 32);
+
+		    	BouncyCastleProvider bouncyCastleProvider = new BouncyCastleProvider();
+		    	Signature signature2 = Signature.getInstance("Ed25519", bouncyCastleProvider);
+		    	
+		    	byte[] pubKeyBytes = state.getDictPK();
+		    	SubjectPublicKeyInfo pubKeyInfo = new SubjectPublicKeyInfo(
+		                new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519), pubKeyBytes);
+		    	X509EncodedKeySpec keySpec = new X509EncodedKeySpec(pubKeyInfo.getEncoded());
+		    	KeyFactory keyFactory = KeyFactory.getInstance("Ed25519", bouncyCastleProvider);
+		    	PublicKey pk = keyFactory.generatePublic(keySpec);
+		    	signature2.initVerify(pk);
+		        signature2.update(hashBlock);
+		        System.out.println("======\nVérification signature : \n"+signature2.verify(block.getSignature())+"\n===========");
 		    	//---------------------------------
 		    }
 

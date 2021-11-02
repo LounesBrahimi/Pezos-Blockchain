@@ -18,6 +18,22 @@ public class Block {
 	private byte[] signature;
 	private byte[] hashCurrentBlock;
 	private Utils util;
+	private byte[] receivedMessage;
+	
+	public byte[] getSignature() {
+		return this.signature;
+	}
+	
+	public byte[] encodeBlockWithoutSignature() throws IOException {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		outputStream.write(util.to4BytesArray(level));
+		outputStream.write(predecessor); 
+		outputStream.write(util.to8BytesArray(timestamp));
+		outputStream.write(operationsHash);
+		outputStream.write(stateHash);
+		return outputStream.toByteArray();
+	}
+	
 	
 	/*
 	 * Constuit un block depuis le message reçu
@@ -31,6 +47,7 @@ public class Block {
         this.stateHash      = Arrays.copyOfRange(receivedMessage,78,110);
         this.signature      = Arrays.copyOfRange(receivedMessage,110,174);
         this.hashCurrentBlock = util.hash(this.encodeToBytes(), 32);
+        this.receivedMessage = receivedMessage;
     }
 	
 	/*

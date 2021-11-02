@@ -14,6 +14,10 @@ public class State {
 	private byte[] accountsBytes;
 	private Utils util;
 	
+	public byte[] getDictPK() {
+		return this.dictateurPubkey;
+	}
+	
 	public State() {
 		util = new Utils();
 	}
