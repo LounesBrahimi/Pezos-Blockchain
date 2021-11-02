@@ -16,6 +16,7 @@ import blockchaine.Block;
 import connection.Connection;
 import operations.HachOfOperations;
 import operations.ListOperations;
+import state.State;
 import tools.Utils;
 
 public class Interaction {
@@ -171,7 +172,9 @@ public class Interaction {
 	        byte[] msg = util.to2BytesArray(5);
 	        msg = concatTwoArrays(msg, util.to4BytesArray(level));
 	        util.sendToSocket(msg,out,"tag 5");
+	        
 	        byte[] reponse = util.getFromSocket(1000,in,"ops");
+	      //  byte[] reponse = tag5call(out, in);
 	        ListOperations lop = new ListOperations();
 	    	lop.extractAllOperations(reponse);
 	    	HachOfOperations hashOps = new HachOfOperations(lop.getListOperations());
@@ -186,5 +189,16 @@ public class Interaction {
 				System.out.println("error on operations hash");
 				tag9call(out, 3, hashInBlock);
 			}
+	 }
+	 
+	 public void verifyStateHash(int level, byte[] hashStateInBlock,  DataOutputStream out, DataInputStream  in) throws IOException, org.apache.commons.codec.DecoderException {
+		   byte[] msg = util.to2BytesArray(7);
+	        msg = concatTwoArrays(msg, util.to4BytesArray(level));
+	        util.sendToSocket(msg,out,"tag 7");
+	        
+	        byte[] reponse = util.getFromSocket(1000,in,"state");
+	        State state = new State();
+	        state.extractState(reponse);
+	        System.out.println("#Verification State : # "+ Arrays.areEqual(state.hashTheState(), hashStateInBlock));
 	 }
 }

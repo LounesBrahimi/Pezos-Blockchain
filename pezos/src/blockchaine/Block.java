@@ -79,4 +79,8 @@ public class Block {
 	public byte[] getHashCurrentBlock() {
 		return this.hashCurrentBlock;
 	}
+	
+	public byte[] getStateHash() {
+		return this.stateHash;
+	}
 }

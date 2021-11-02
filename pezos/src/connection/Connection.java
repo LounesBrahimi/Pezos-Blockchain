@@ -69,6 +69,10 @@ public class Connection {
 		    	Block blockAsObjet = new Block(reponse);
 		    	inter.verifyTimeStamp(blockAsObjet.getLevel()-1, blockAsObjet.getTimeStamp(), out, in);
 		    	System.out.println(blockAsObjet);
+		    	
+		    	//---------------------------------
+		    	inter.verifyStateHash(blockAsObjet.getLevel(), blockAsObjet.getStateHash(), out, in);
+		    	//---------------------------------
 		    }  else if (tag == 5) {
 		    	ListOperations lop = new ListOperations();
 		    	lop.extractAllOperations(reponse);
@@ -78,8 +82,12 @@ public class Connection {
 		    }  else if (tag == 7) {
 		    	State state = new State();
 		    	state.extractState(reponse);
+		    	System.out.println("hash calculé state "+util.toHexString(state.hashTheState()));
+
 		    	ListAccounts lAccounts = new ListAccounts();
 		    	lAccounts.extractAllAccounts(state.getAccountsBytes());
+		    	//---------------------------------
+		    	//---------------------------------
 		    }
 
 			this.closeConnection(socket);
