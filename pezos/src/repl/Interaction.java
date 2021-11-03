@@ -220,11 +220,11 @@ public class Interaction {
 
 		if(diffenenceTimestampsInSeconds>=600){
 			// cf. anoncé : pour être valide, le temps du block doit être au moins espacé de 10 minutes par rapport au bloc précédent
-			System.out.println("======\n #Verification Predecessor :# True");
+			System.out.println("======\n #Verification TimeStamp :# true");
 			return true;
 			}
 		else {
-			System.out.println("======\n #Verification Predecessor :# False");
+			System.out.println("======\n #Verification TimeStamp :# false");
 			return false;
 		}
    }
