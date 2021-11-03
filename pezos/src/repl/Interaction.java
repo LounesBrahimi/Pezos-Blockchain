@@ -18,6 +18,8 @@ import com.google.common.io.BaseEncoding;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.CryptoException;
+import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.security.InvalidKeyException;
@@ -129,7 +131,7 @@ public class Interaction {
         return util.getFromSocket(1000,in,"block");
 	}
 	
-	 public byte[] tagCall (int tag, DataOutputStream out, DataInputStream  in) throws IOException, DecoderException, org.apache.commons.codec.DecoderException{
+	public byte[] tagCall (int tag, DataOutputStream out, DataInputStream  in) throws IOException, DecoderException, org.apache.commons.codec.DecoderException{
 			switch(tag){
 	            case 1 :
 	                byte[] msg = util.to2BytesArray(1);
@@ -150,73 +152,91 @@ public class Interaction {
 
 		//Vérifications
 	
-		public void tag9call(DataOutputStream out, int ErrorTag, byte[] wrongData) throws org.apache.commons.codec.DecoderException, IOException {
+	public byte[] tag9Content(DataOutputStream out, int ErrorTag, byte[] wrongData) throws org.apache.commons.codec.DecoderException, IOException {
 			// A TESTER
 			byte[] msg = util.to2BytesArray(9);
 			msg = concatTwoArrays(msg, util.to2BytesArray(ErrorTag));
 			msg = concatTwoArrays(msg, wrongData);
-			util.sendToSocket(msg, out);
-			System.out.println("message d'erreur envoyé");
-			/* Pas besoin?
-			switch(ErrorTag){
-				case 1 : //BAD PREDECESSOR 
-				// A TESTER
-					msg = concatTwoArrays(msg, util.to2BytesArray(ErrorTag));
-					msg = concatTwoArrays(msg, wrongData);
-					util.sendToSocket(msg, out);
-					break;
-				case 2 : //BAD TIMESTAMP
-				// A TESTER
-					msg = concatTwoArrays(msg, util.to2BytesArray(ErrorTag));
-					msg = concatTwoArrays(msg, wrongData);
-					util.sendToSocket(msg, out);
-					break;
-				case 3 : //BAD OPERATIONS HASH
-				// A TESTER
-					msg = concatTwoArrays(msg, util.to2BytesArray(errorTag));
-					msg = concatTwoArrays(msg, wrongData);
-				case 4 : //BAD CONTEXT HASH
-				case 5 : //BAD SIGNATURE
-				default : System.out.println("wrong error tag");
-			}*/
+			return msg;
+		}
+	//Version pour la signature
+	public byte[] tag9ContentSign(DataOutputStream out, int ErrorTag){
+		byte[] msg = util.to2BytesArray(9);
+		msg = concatTwoArrays(msg, util.to2BytesArray(ErrorTag));
+		return msg;
+	}
+
+	public void tag9Call(byte[] content, String pk, String sk, DataOutputStream out) throws DataLengthException, org.apache.commons.codec.DecoderException, CryptoException, IOException{
+		byte[] msg = content;
+		byte[] pkBytes = util.toBytesArray(pk);
+
+		// Ajout de la clé publique
+		content = concatTwoArrays(content,pkBytes);
+		// Création de la signature
+		byte[] signature = util.signature(concatTwoArrays(content, pkBytes), sk);
+		// ajout de la signature
+		concatTwoArrays(content, signature);
+		//envoi du message "Content+publicKey+Signature"
+		util.sendToSocket(content, out);
+	}
+
+
+	public void verifyErrors( Block block, DataOutputStream out, DataInputStream in, String pk, String sk) throws IOException, org.apache.commons.codec.DecoderException, InvalidKeyException, SignatureException, InvalidKeySpecException, NoSuchAlgorithmException, DataLengthException, CryptoException{
+		byte[] operationContent = null;
+		if(!verifyPredecessorValue(block.getLevel(), block.getPredecessor(), out, in)){
+			operationContent = tag9Content(out, 1, block.getPredecessor());
+		}
+		else if(!verifyTimeStamp(block.getLevel(), block.getTimeStampBytes(), out, in)){
+		operationContent = tag9Content(out, 2, block.getTimeStampBytes());
+		}
+		else if(!verifyHashOperations(block.getLevel(),block.getOperationsHash() , out, in)){
+		operationContent = tag9Content(out, 3, block.getOperationsHash());
+		}
+		 //verifyStateHash(block.getLevel(), block.getOperationsHash(), out, in);
+		else if(!verifySignature(block,out, in)) {
+			System.out.println("======\nVerification signature : \n false \n===========");
+			operationContent = tag9ContentSign(out, 5);
 		}
 
-
-	 public void verifyErrors( Block block, DataOutputStream out, DataInputStream in) throws IOException, org.apache.commons.codec.DecoderException, InvalidKeyException, SignatureException, InvalidKeySpecException, NoSuchAlgorithmException{
-		 verifyPredecessorValue(block.getLevel(), block.getPredecessor(), out, in);
-		 verifyTimeStamp(block.getLevel(), block.getTimeStamp(), out, in);
-		 verifyHashOperations(block.getLevel(),block.getOperationsHash() , out, in);
-		 verifyStateHash(block.getLevel(), block.getOperationsHash(), out, in);
-		 verifySignature(block,out, in);
+		if(operationContent != null){
+		tag9Call(operationContent, pk, sk, out);
+		} else {
+			System.err.println("no error on this block");
+		}
 	 }
-	 public void verifyPredecessorValue(int level, byte[] PredecessorInBlock, DataOutputStream out, DataInputStream  in) throws IOException, org.apache.commons.codec.DecoderException {
+	 public boolean verifyPredecessorValue(int level, byte[] PredecessorInBlock, DataOutputStream out, DataInputStream  in) throws IOException, org.apache.commons.codec.DecoderException {
 	        
 	        byte[] blockAsBytes = tag3call(level-1, out, in);
 	        Block blockAsObjet = new Block(blockAsBytes);
-	        System.out.println("#Verification Predecessor :#" +Arrays.areEqual(PredecessorInBlock, blockAsObjet.getHashCurrentBlock()));
-			//appel au tag 9 de correction
-			/*if(!(Arrays.areEqual(PredecessorInBlock, blockAsObjet.getHashCurrentBlock()))){
-				System.out.println("error found at predecessor");
-				tag9call(out, 1, PredecessorInBlock);
-			}*/
+	        System.out.println("======\n #Verification Predecessor :#" +Arrays.areEqual(PredecessorInBlock, blockAsObjet.getHashCurrentBlock()));
+			return Arrays.areEqual(PredecessorInBlock, blockAsObjet.getHashCurrentBlock());
 	 }
 	 
-	 public void verifyTimeStamp(int level, long timeStamp, DataOutputStream out, DataInputStream  in) throws IOException, org.apache.commons.codec.DecoderException {
-	        byte[] blockAsBytes = tag3call(level-1,out, in);
-	        Block blockAsObjet = new Block(blockAsBytes);
-	        System.out.println("#Verification TimeStamp : #" + ((timeStamp - blockAsObjet.getTimeStamp())== 600));
+	 public boolean verifyTimeStamp(int level, byte[] timestampToVerify, DataOutputStream out, DataInputStream  in) throws IOException, org.apache.commons.codec.DecoderException {
+		byte[] receivedMessage = tag7call(level,out,in);
+		//System.out.println("receivedMessage="+util.toHexString(receivedMessage));
+		// if(tag==2) c'est le broadcast regulier, traiter le block broadcasté et lire le message suivant à tag 8)
 
-			//appel au tag 9 de correction
-			/*if((timeStamp - blockAsObjet.getTimeStamp()) == 600){
-				System.out.println("no error on timestamp");
+		State state = new State();
+		state.extractState(receivedMessage);
+		byte[] correctPredecessorTimestamp = state.getPredecessorTimestamp();
+		//System.out.println("correctPredecessorTimestamp="+util.toLong(correctPredecessorTimestamp));
+
+		long diffenenceTimestampsInSeconds = util.toLong(timestampToVerify)-util.toLong(correctPredecessorTimestamp);//(predecessorTimestampToVerify-correctPredecessorTimestamp) >= 600;
+		//System.out.println("diffenenceTimestampsInSeconds="+diffenenceTimestampsInSeconds);
+
+		if(diffenenceTimestampsInSeconds>=600){
+			// cf. anoncé : pour être valide, le temps du block doit être au moins espacé de 10 minutes par rapport au bloc précédent
+			System.out.println("======\n #Verification Predecessor :# True");
+			return true;
 			}
-			else {
-				System.out.println("error on timestamp");
-				tag9call(out, 2, util.to8BytesArray(timeStamp));
-			}*/
-	 }
+		else {
+			System.out.println("======\n #Verification Predecessor :# False");
+			return false;
+		}
+   }
 	 
-	 public void verifyHashOperations(int level, byte[] hashInBlock, DataOutputStream out, DataInputStream  in) throws IOException, org.apache.commons.codec.DecoderException {
+	 public boolean verifyHashOperations(int level, byte[] hashInBlock, DataOutputStream out, DataInputStream  in) throws IOException, org.apache.commons.codec.DecoderException {
 	        byte[] msg = util.to2BytesArray(5);
 	        msg = concatTwoArrays(msg, util.to4BytesArray(level));
 	        util.sendToSocket(msg,out,"tag 5");
@@ -227,30 +247,20 @@ public class Interaction {
 	    	lop.extractAllOperations(reponse);
 	    	HachOfOperations hashOps = new HachOfOperations(lop.getListOperations());
 	    	byte[] hashDesOperations = hashOps.ops_hash();
-	        System.out.println("#Verification Operations : # "+ Arrays.areEqual(hashInBlock, hashDesOperations));
-
-			//appel au tag 9 de correction
-			/*if(Arrays.areEqual(hashInBlock, hashDesOperations)){
-				System.out.println("no error on operations hash");
-			}
-			else{
-				System.out.println("error on operations hash");
-				tag9call(out, 3, hashInBlock);
-			}*/
+	        System.out.println("======\n#Verification Operations : # "+ Arrays.areEqual(hashInBlock, hashDesOperations));
+			return Arrays.areEqual(hashInBlock, hashDesOperations);
 	 }
 	 
-	 public void verifyStateHash(int level, byte[] hashStateInBlock,  DataOutputStream out, DataInputStream  in) throws IOException, org.apache.commons.codec.DecoderException {
+	 public boolean verifyStateHash(int level, byte[] hashStateInBlock,  DataOutputStream out, DataInputStream  in) throws IOException, org.apache.commons.codec.DecoderException {
 	        byte[] reponse = tag7call(level, out, in);
 	        State state = new State();
 	        state.extractState(reponse);
-	        System.out.println("#Verification State : # "+ Arrays.areEqual(state.hashTheState(), hashStateInBlock));
-			/*if(!Arrays.areEqual(state.hashTheState(), hashStateInBlock)){
-				System.out.println("appel tag 9");
-				tag9call(out, 4, hashStateInBlock);
-			}*/
+	        System.out.println("======\n #Verification State : # "+ Arrays.areEqual(state.hashTheState(), hashStateInBlock));
+			return Arrays.areEqual(state.hashTheState(), hashStateInBlock);
+
 	 }
 
-	 public void verifySignature(Block block, DataOutputStream out, DataInputStream in) throws InvalidKeyException, SignatureException, InvalidKeySpecException, NoSuchAlgorithmException, IOException, org.apache.commons.codec.DecoderException{
+	 public boolean verifySignature(Block block, DataOutputStream out, DataInputStream in) throws InvalidKeyException, SignatureException, InvalidKeySpecException, NoSuchAlgorithmException, IOException, org.apache.commons.codec.DecoderException{
 
 		State state = new State();
 		state.extractState(tag7call(block.getLevel(), out, in));
@@ -265,6 +275,6 @@ public class Interaction {
 		PublicKey pk = keyFactory.generatePublic(keySpec);
 		signature2.initVerify(pk);
 		signature2.update(hashBlock);
-		System.out.println("======\nVerification signature : \n"+signature2.verify(block.getSignature())+"\n===========");
+		return signature2.verify(block.getSignature());
 	 }
 }

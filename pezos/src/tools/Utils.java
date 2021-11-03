@@ -53,7 +53,7 @@ public class Utils {
 	/*
 	 * Convertie un String en un tableau de bytess
 	 * */
-	public static byte[] toBytesArray(String str) throws DecoderException {
+	public byte[] toBytesArray(String str) throws DecoderException {
 		return Hex.decodeHex(str.toCharArray());
 	}
 	
@@ -132,7 +132,7 @@ public class Utils {
 	 * Signature en Ed25519
 	 * */
 	public byte[] signature(byte[] msgToSign, String skString) throws DecoderException, DataLengthException, CryptoException {
-		byte[] skBytes = Utils.toBytesArray(skString);
+		byte[] skBytes = toBytesArray(skString);
 		Ed25519PrivateKeyParameters sk2 = new Ed25519PrivateKeyParameters(skBytes);
 		Signer signer = new Ed25519Signer();
 		signer.init(true, sk2);

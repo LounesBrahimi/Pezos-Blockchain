@@ -12,7 +12,7 @@ public class Block {
 
 	private int    level; 
 	private byte[] predecessor;
-	private long   timestamp; 
+	private byte[]   timestamp; 
 	private byte[] operationsHash;
 	private byte[] stateHash;
 	private byte[] signature;
@@ -28,7 +28,7 @@ public class Block {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		outputStream.write(util.to4BytesArray(level));
 		outputStream.write(predecessor); 
-		outputStream.write(util.to8BytesArray(timestamp));
+		outputStream.write(util.to8BytesArray(util.toLong(timestamp)));
 		outputStream.write(operationsHash);
 		outputStream.write(stateHash);
 		return outputStream.toByteArray();
@@ -42,7 +42,7 @@ public class Block {
 		this.util = new Utils();
         this.level          = util.toInt(Arrays.copyOfRange(receivedMessage,2,6)); 
         this.predecessor    = Arrays.copyOfRange(receivedMessage,6,38); 
-        this.timestamp      = util.toLong(Arrays.copyOfRange(receivedMessage,38,46));
+        this.timestamp      = Arrays.copyOfRange(receivedMessage,38,46);
         this.operationsHash = Arrays.copyOfRange(receivedMessage,46,78);
         this.stateHash      = Arrays.copyOfRange(receivedMessage,78,110);
         this.signature      = Arrays.copyOfRange(receivedMessage,110,174);
@@ -57,7 +57,7 @@ public class Block {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		outputStream.write(util.to4BytesArray(level));
 		outputStream.write(predecessor); 
-		outputStream.write(util.to8BytesArray(timestamp));
+		outputStream.write(util.to8BytesArray(util.toLong(timestamp)));
 		outputStream.write(operationsHash);
 		outputStream.write(stateHash);
 		outputStream.write(signature);
@@ -69,7 +69,7 @@ public class Block {
 				return "BLOCK:"+
 					 "\n  level:           "+level+ " (or "+util.toStringOfHex(level) +" as Hex)"+
 					 "\n  predecessor:     "+util.toHexString(predecessor)+
-					 "\n  timestamp:       "+(util.toDateAsString(timestamp)+" (="+timestamp+" sec)")+
+					 "\n  timestamp:       "+(util.toDateAsString(util.toLong(timestamp))+" (="+timestamp+" sec)")+
 					 "\n  operations hash: "+util.toHexString(operationsHash)+
 					 "\n  state hash:      "+util.toHexString(stateHash)+
 					 "\n  signature:       "+util.toHexString(signature)+
@@ -90,6 +90,10 @@ public class Block {
 	}
 	
 	public long getTimeStamp() {
+		return util.toLong(timestamp);
+	}
+
+	public byte[] getTimeStampBytes(){
 		return this.timestamp;
 	}
 	
