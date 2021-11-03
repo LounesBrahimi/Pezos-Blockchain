@@ -5,11 +5,9 @@ import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.crypto.CryptoException;
@@ -19,15 +17,12 @@ import org.bouncycastle.crypto.DataLengthException;
 import blockchaine.Block;
 import operations.HachOfOperations;
 import operations.ListOperations;
-import operations.Operation;
 import repl.Interaction;
-import state.Account;
 import state.ListAccounts;
 import state.State;
 import tools.Utils;
 
 
-import java.io.IOException;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 
@@ -44,10 +39,7 @@ public class Connection {
 	private DataInputStream  in;
 	
 	public Connection(String hostname, int port, String skString, String pkString) throws UnknownHostException, IOException, DecoderException, DataLengthException, CryptoException, InterruptedException, SignatureException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException {
-
-			this.in = in;
-			this.out = out;
-			
+	
 			Socket socket = new Socket(hostname, port); 
 			this.in	= new DataInputStream (new BufferedInputStream (socket.getInputStream ()));
 			this.out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
@@ -99,7 +91,7 @@ public class Connection {
 		    	
 		    	//---------------------------------
 		    }
-
+			myObj.close();
 			this.closeConnection(socket);
 		} 
 

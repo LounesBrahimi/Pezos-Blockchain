@@ -5,22 +5,16 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.stream.Stream;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.encoders.DecoderException;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import java.net.InetAddress;
-
-import com.google.common.io.BaseEncoding;
 
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DataLengthException;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -31,7 +25,6 @@ import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import blockchaine.Block;
-import connection.Connection;
 import operations.HachOfOperations;
 import operations.ListOperations;
 import state.State;

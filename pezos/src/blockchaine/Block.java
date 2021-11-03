@@ -1,13 +1,9 @@
 package blockchaine;
 
 import tools.Utils;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Hex;
-
 public class Block {
 
 	private int    level; 
