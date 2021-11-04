@@ -38,19 +38,6 @@ public class Interaction {
 		this.util = new Utils();
 	}
 	
-	public byte[] concatTwoArrays(byte[] a, byte[] b) {
-		int sizeA = a.length;
-		int sizeB = b.length;
-		byte[] res = new byte[sizeA + sizeB];
-		for (int i = 0; i < a.length; i++) {
-			res[i] = a[i];
-		}
-		for (int i = a.length, j = 0; j < b.length && i  < res.length; i++, j++) {
-			res[i] = b[j];
-		}
-		return res;
-	}
-	
 	public byte[] tag3call(DataOutputStream out, DataInputStream  in) throws org.apache.commons.codec.DecoderException, IOException {
 		Scanner myObj = new Scanner(System.in);
 		System.out.println("Donnez le level souhait� : ");
@@ -59,7 +46,7 @@ public class Interaction {
 	    
 	    // communication avec le serveur
         byte[] msg = util.to2BytesArray(3);
-        msg = concatTwoArrays(msg, levelBytes);
+        msg = util.concatTwoArrays(msg, levelBytes);
         util.sendToSocket(msg,out,"tag 3");
         byte[] blockAsBytes3 = util.getFromSocket(174,in,"block");
 		myObj.close();
@@ -71,7 +58,7 @@ public class Interaction {
 	    
 	    // communication avec le serveur
         byte[] msg = util.to2BytesArray(3);
-        msg = concatTwoArrays(msg, levelBytes);
+        msg = util.concatTwoArrays(msg, levelBytes);
         util.sendToSocket(msg,out,"tag 3");
         byte[] blockAsBytes3 = util.getFromSocket(174,in,"block");
         return blockAsBytes3;
@@ -85,7 +72,7 @@ public class Interaction {
 	    
 	    // communication avec le serveur
         byte[] msg = util.to2BytesArray(5);
-        msg = concatTwoArrays(msg, levelBytes);
+        msg = util.concatTwoArrays(msg, levelBytes);
         util.sendToSocket(msg,out,"tag 5");
         myObj.close();
         return util.getFromSocket(10000,in,"block");
@@ -96,7 +83,7 @@ public class Interaction {
 	    
 	    // communication avec le serveur
         byte[] msg = util.to2BytesArray(5);
-        msg = concatTwoArrays(msg, levelBytes);
+        msg = util.concatTwoArrays(msg, levelBytes);
         util.sendToSocket(msg,out,"tag 5");
         
         return util.getFromSocket(10000,in,"block");
@@ -110,7 +97,7 @@ public class Interaction {
 	    
 	    // communication avec le serveur
         byte[] msg = util.to2BytesArray(7);
-        msg = concatTwoArrays(msg, levelBytes);
+        msg = util.concatTwoArrays(msg, levelBytes);
         util.sendToSocket(msg,out,"tag 7");
 		myObj.close();
         return util.getFromSocket(1000,in,"block");
@@ -121,7 +108,7 @@ public class Interaction {
 	    
 	    // communication avec le serveur
         byte[] msg = util.to2BytesArray(7);
-        msg = concatTwoArrays(msg, levelBytes);
+        msg = util.concatTwoArrays(msg, levelBytes);
         util.sendToSocket(msg,out,"tag 7");
         return util.getFromSocket(1000,in,"block");
 	}
@@ -151,7 +138,7 @@ public class Interaction {
 			// A TESTER
 			//byte[] msg = util.to2BytesArray(9);
 			byte[] msg = util.to2BytesArray(ErrorTag);
-			msg = concatTwoArrays(msg, correctedData);
+			msg = util.concatTwoArrays(msg, correctedData);
 			return msg;
 		}
 
@@ -167,14 +154,14 @@ public class Interaction {
 		byte[] pkBytes = util.toBytesArray(pk);
 
 		// Création de la signature
-		byte[] signature = util.signature(util.hash(concatTwoArrays(content, pkBytes),32), sk);
+		byte[] signature = util.signature(util.hash(util.concatTwoArrays(content, pkBytes),32), sk);
 
 		// Ajout de la clé publique
-		content = concatTwoArrays(content,pkBytes);
+		content = util.concatTwoArrays(content,pkBytes);
 
 		// ajout de la signature
-		content = concatTwoArrays(content, signature);
-		content = concatTwoArrays(util.to2BytesArray(9), content);
+		content = util.concatTwoArrays(content, signature);
+		content = util.concatTwoArrays(util.to2BytesArray(9), content);
 
 		//envoi du message "Content+publicKey+Signature"
 		util.sendToSocket(content, out);

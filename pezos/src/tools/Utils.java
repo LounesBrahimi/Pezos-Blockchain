@@ -27,6 +27,20 @@ public class Utils {
 	public Utils() {
 	}
 	
+	public byte[] concatTwoArrays(byte[] a, byte[] b) {
+		int sizeA = a.length;
+		int sizeB = b.length;
+		byte[] res = new byte[sizeA + sizeB];
+		for (int i = 0; i < a.length; i++) {
+			res[i] = a[i];
+		}
+		for (int i = a.length, j = 0; j < b.length && i  < res.length; i++, j++) {
+			res[i] = b[j];
+		}
+		return res;
+	}
+	
+
 	/*
 	 * Recupere un message depuis le serveur
 	 * */

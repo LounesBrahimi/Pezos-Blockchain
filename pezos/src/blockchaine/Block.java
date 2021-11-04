@@ -23,7 +23,7 @@ public class Block {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		outputStream.write(util.to4BytesArray(level));
 		outputStream.write(predecessor); 
-		outputStream.write(util.to8BytesArray(util.toLong(timestamp)));
+		outputStream.write(timestamp);
 		outputStream.write(operationsHash);
 		outputStream.write(stateHash);
 		return outputStream.toByteArray();
