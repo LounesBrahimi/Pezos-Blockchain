@@ -38,10 +38,10 @@ public class Connection {
 	private DataOutputStream out;
 	private DataInputStream  in;
 	
-	public Connection(String hostname, int port, String skString, String pkString) throws UnknownHostException, IOException, DecoderException, DataLengthException, CryptoException, InterruptedException, SignatureException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException {
+	public Connection(String hostname, int port, String pkString, String skString) throws UnknownHostException, IOException, DecoderException, DataLengthException, CryptoException, InterruptedException, SignatureException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException {
 	
 			Socket socket = new Socket(hostname, port); 
-			this.in	= new DataInputStream (new BufferedInputStream (socket.getInputStream ()));
+			this.in	 = new DataInputStream (new BufferedInputStream (socket.getInputStream ()));
 			this.out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 			
 			Utils util = new Utils();
@@ -55,11 +55,12 @@ public class Connection {
 			// envoie du 3eme message "la graine hash� et sign�"
 			byte[] hashSeed = util.hash(seed, 32);
 			byte[] signature = util.signature(hashSeed, skString);
-
 			util.sendToSocket(signature,this.out,"signature");
 			
 			// interaction avec l'utilisateur ( REPL 
+/*
 			Interaction inter = new Interaction();
+
 			Scanner myObj = new Scanner(System.in);
 			System.out.println("Donnez le tag : ");
 		    int tag = myObj.nextInt();
@@ -93,6 +94,7 @@ public class Connection {
 		    }
 			myObj.close();
 			//this.closeConnection(socket);
+*/
 		} 
 
 	public DataOutputStream getOut() {

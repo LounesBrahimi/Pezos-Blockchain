@@ -1,5 +1,4 @@
 package blockchaine;
-
 import tools.Utils;
 import java.util.Arrays;
 import java.io.ByteArrayOutputStream;
@@ -14,10 +13,6 @@ public class Block {
 	private byte[] signature;
 	private byte[] hashCurrentBlock;
 	private Utils util;
-	
-	public byte[] getSignature() {
-		return this.signature;
-	}
 	
 	public byte[] encodeBlockWithoutSignature() throws IOException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -41,7 +36,7 @@ public class Block {
         this.operationsHash = Arrays.copyOfRange(receivedMessage,46,78);
         this.stateHash      = Arrays.copyOfRange(receivedMessage,78,110);
         this.signature      = Arrays.copyOfRange(receivedMessage,110,174);
-        this.hashCurrentBlock = util.hash(this.encodeToBytes(), 32);
+        this.hashCurrentBlock = util.hash(this.encodeToBytes(),32);
     }
 	
 	/*
@@ -51,7 +46,7 @@ public class Block {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		outputStream.write(util.to4BytesArray(level));
 		outputStream.write(predecessor); 
-		outputStream.write(util.to8BytesArray(util.toLong(timestamp)));
+		outputStream.write(timestamp);
 		outputStream.write(operationsHash);
 		outputStream.write(stateHash);
 		outputStream.write(signature);
@@ -68,7 +63,7 @@ public class Block {
 					 "\n  state hash:       "+util.toHexString(stateHash)+
 					 "\n  signature:        "+util.toHexString(signature)+
 					 "\n  encoded block:    "+util.toHexString(this.encodeToBytes())+
-					 "\n  hash of the block:"+util.toHexString(util.hash(this.encodeToBytes(), 32));
+					 "\n  hash of the block:"+util.toHexString(hashCurrentBlock);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -101,5 +96,9 @@ public class Block {
 	
 	public byte[] getStateHash() {
 		return this.stateHash;
+	}
+	
+	public byte[] getSignature() {
+		return this.signature;
 	}
 }

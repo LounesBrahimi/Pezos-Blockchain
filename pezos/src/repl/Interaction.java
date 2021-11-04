@@ -150,7 +150,6 @@ public class Interaction {
 	}
 
 	public void tag9Call(byte[] content, String pk, String sk, DataOutputStream out) throws DataLengthException, org.apache.commons.codec.DecoderException, CryptoException, IOException{
-
 		byte[] pkBytes = util.toBytesArray(pk);
 
 		// Création de la signature

@@ -165,6 +165,10 @@ public class Utils {
 		return localDateTime.atZone(ZoneId.of("UTC")).toEpochSecond(); 
 	}
 	
+	public long currentDateTimeAsSeconds() {
+		return LocalDateTime.now(ZoneId.of("UTC")).atZone(ZoneId.of("UTC")).toEpochSecond(); 
+	}
+	
 	/*
 	 * Convertie un tableau de bytes en entier
 	 * */
