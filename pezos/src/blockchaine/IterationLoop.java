@@ -47,7 +47,7 @@ public class IterationLoop {
 			secondsBeforeNextbroadcast = 600 - (timestampLastReceptionBroadcast-lastBroadcastedBlock.getTimeStamp());
 			System.out.println("secondsBeforeNextbroadcast = "+secondsBeforeNextbroadcast);
 			//TimeUnit.SECONDS.sleep(secondsBeforeNextbroadcast+2);
-			TimeUnit.SECONDS.sleep(30);
+			TimeUnit.SECONDS.sleep(600);
 		}
 	}
 }
