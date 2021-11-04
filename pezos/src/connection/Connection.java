@@ -61,7 +61,7 @@ public class Connection {
 			// interaction avec l'utilisateur ( REPL 
 			Interaction inter = new Interaction();
 			Scanner myObj = new Scanner(System.in);
-			System.out.println("Donnez le tag souhait� : ");
+			System.out.println("Donnez le tag : ");
 		    int tag = myObj.nextInt();
 		    
 		    byte[] reponse = inter.tagCall(tag, this.out, this.in);
@@ -78,11 +78,11 @@ public class Connection {
 		    	lop.extractAllOperations(reponse);
 		    	HachOfOperations hashOps = new HachOfOperations(lop.getListOperations());
 		    	byte[] hashDesOperations = hashOps.ops_hash();
-		    	System.out.println("hash calcul� operations : "+ util.toHexString(hashDesOperations));
+		    	System.out.println("hash calcul operations : "+ util.toHexString(hashDesOperations));
 		    }  else if (tag == 7) {
 		    	State state = new State();
 		    	state.extractState(reponse);
-		    	System.out.println("hash calcul� state "+ util.toHexString(state.hashTheState()));
+		    	System.out.println("hash calcul state "+ util.toHexString(state.hashTheState()));
 
 		    	ListAccounts lAccounts = new ListAccounts();
 		    	lAccounts.extractAllAccounts(state.getAccountsBytes());
@@ -92,7 +92,7 @@ public class Connection {
 		    	//---------------------------------
 		    }
 			myObj.close();
-			this.closeConnection(socket);
+			//this.closeConnection(socket);
 		} 
 
 	public DataOutputStream getOut() {

@@ -14,7 +14,6 @@ public class Block {
 	private byte[] signature;
 	private byte[] hashCurrentBlock;
 	private Utils util;
-	private byte[] receivedMessage;
 	
 	public byte[] getSignature() {
 		return this.signature;
@@ -43,7 +42,6 @@ public class Block {
         this.stateHash      = Arrays.copyOfRange(receivedMessage,78,110);
         this.signature      = Arrays.copyOfRange(receivedMessage,110,174);
         this.hashCurrentBlock = util.hash(this.encodeToBytes(), 32);
-        this.receivedMessage = receivedMessage;
     }
 	
 	/*
