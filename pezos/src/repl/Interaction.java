@@ -54,7 +54,7 @@ public class Interaction {
 	}
 
 	public byte[] tag3call(int level,DataOutputStream out, DataInputStream  in) throws org.apache.commons.codec.DecoderException, IOException {
-	    byte[] levelBytes = this.util.to4BytesArray(level);
+	    byte[] levelBytes = util.to4BytesArray(level);
 	    
 	    // communication avec le serveur
         byte[] msg = util.to2BytesArray(3);
@@ -168,6 +168,7 @@ public class Interaction {
 
 
 	public void verifyErrors( Block block, DataOutputStream out, DataInputStream in, String pk, String sk) throws IOException, org.apache.commons.codec.DecoderException, InvalidKeyException, SignatureException, InvalidKeySpecException, NoSuchAlgorithmException, DataLengthException, CryptoException{
+		System.out.println("******************************* verifyErrors\n"+block.toString()+"\n**********************************");
 		byte[] operationContent = null;
 		//Predecessor
 		Block predecessor = new Block(tag3call(block.getLevel()-1, out, in));
@@ -186,6 +187,7 @@ public class Interaction {
 		ListOperations lop = new ListOperations();
 	    lop.extractAllOperations(tag5call(block.getLevel(),out, in));
 	    HachOfOperations hashOps = new HachOfOperations(lop.getListOperations());
+		System.out.println("******************************* hashOps = \n"+hashOps.toString());
 	    byte[] hashDesOperations = hashOps.ops_hash();
 		
 		//VerifPred

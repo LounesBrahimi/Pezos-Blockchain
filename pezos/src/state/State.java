@@ -25,6 +25,7 @@ public class State {
 	}
 	
 	public void extractState(byte[] receivedMessage) {
+		System.out.println("****************** extractState("+util.toHexString(receivedMessage)+")");
 		this.tag = Arrays.copyOfRange(receivedMessage,0,2);
 		this.dictateurPubkey = Arrays.copyOfRange(receivedMessage,2,34);
 		this.predecessor_timestamp = Arrays.copyOfRange(receivedMessage,34,42);
@@ -32,7 +33,7 @@ public class State {
 		this.accountsBytes = Arrays.copyOfRange(receivedMessage,46,receivedMessage.length);
 		stateData = Arrays.copyOfRange(receivedMessage,2,receivedMessage.length);
 		System.out.println("dictat_pubk : "+ util.toHexString(dictateurPubkey));
-		System.out.println("predecessot_timestamp : "+ util.toHexString(predecessor_timestamp));
+		System.out.println("predecessor_timestamp : "+ util.toHexString(predecessor_timestamp));
 		//System.out.println("nbBytesInNextSequence : "+ util.toHexString(nbBytesInNextSequence));
 		//System.out.println("accountsBytes : "+ util.toHexString(accountsBytes));
 	}

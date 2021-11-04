@@ -1,5 +1,4 @@
 package connection;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -7,27 +6,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Scanner;
-
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
 import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DataLengthException;
-
-
-import blockchaine.Block;
-import operations.HachOfOperations;
-import operations.ListOperations;
-import repl.Interaction;
-import state.ListAccounts;
-import state.State;
 import tools.Utils;
-
-
-import java.security.*;
-import java.security.spec.InvalidKeySpecException;
-
-
-//import org.bouncycastle.jce.provider.BouncyCastleProvider
 
 /*
  * Communication with the server

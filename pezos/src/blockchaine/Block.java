@@ -12,6 +12,7 @@ public class Block {
 	private byte[] stateHash;
 	private byte[] signature;
 	private byte[] hashCurrentBlock;
+	//private byte[] receivedMessage; // tmp
 	private Utils util;
 	
 	public byte[] encodeBlockWithoutSignature() throws IOException {
@@ -37,6 +38,7 @@ public class Block {
         this.stateHash      = Arrays.copyOfRange(receivedMessage,78,110);
         this.signature      = Arrays.copyOfRange(receivedMessage,110,174);
         this.hashCurrentBlock = util.hash(this.encodeToBytes(),32);
+        //this.receivedMessage = Arrays.copyOfRange(receivedMessage,0,174);
     }
 	
 	/*
