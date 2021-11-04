@@ -8,7 +8,7 @@ public class Block {
 
 	private int    level; 
 	private byte[] predecessor;
-	private byte[]   timestamp; 
+	private byte[] timestamp; 
 	private byte[] operationsHash;
 	private byte[] stateHash;
 	private byte[] signature;
@@ -61,14 +61,14 @@ public class Block {
 	public String toString() {
 			try {
 				return "BLOCK:"+
-					 "\n  level:           "+level+ " (or "+util.toStringOfHex(level) +" as Hex)"+
-					 "\n  predecessor:     "+util.toHexString(predecessor)+
-					 "\n  timestamp:       "+(util.toDateAsString(util.toLong(timestamp))+" (="+timestamp+" sec)")+
-					 "\n  operations hash: "+util.toHexString(operationsHash)+
-					 "\n  state hash:      "+util.toHexString(stateHash)+
-					 "\n  signature:       "+util.toHexString(signature)+
-					 "\n  encoded block:   "+util.toHexString(this.encodeToBytes())+
-					 "\n  le has du block:   "+util.toHexString(util.hash(this.encodeToBytes(), 32));
+					 "\n  level:            "+level+ " (or "+util.toStringOfHex(level) +" as Hex)"+
+					 "\n  predecessor:      "+util.toHexString(predecessor)+
+					 "\n  timestamp:        "+(util.toDateAsString(util.toLong(timestamp))+" (or "+util.toLong(timestamp)+" seconds, or "+util.toHexString(timestamp)+" as Hex)")+
+					 "\n  operations hash:  "+util.toHexString(operationsHash)+
+					 "\n  state hash:       "+util.toHexString(stateHash)+
+					 "\n  signature:        "+util.toHexString(signature)+
+					 "\n  encoded block:    "+util.toHexString(this.encodeToBytes())+
+					 "\n  hash of the block:"+util.toHexString(util.hash(this.encodeToBytes(), 32));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

@@ -33,4 +33,18 @@ public class Account {
 		System.out.println("contextHashPez : "+ util.toHexString(contextHashPez));
 		System.out.println("signaturePez : "+ util.toHexString(signaturePez));
 	}
+
+	public String toString() {
+		return "### Account ###"+
+		       "\n  userPubkey : "        + util.toHexString(userPubkey) +
+		       "\n  predPez : "           + util.toHexString(predPez)    +
+		       "\n  timestampPez : "      + util.toHexString(timestampPez) +
+		       "\n  operationsHashPez : " + util.toHexString(operationsHashPez) +
+		       "\n  contextHashPez : "    + util.toHexString(contextHashPez) +
+		       "\n  signaturePez : "      + util.toHexString(signaturePez);
+	}
+
+	public byte[] getUserPubkey() {
+		return userPubkey;
+	}
 }

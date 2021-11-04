@@ -145,7 +145,7 @@ public class Interaction {
 	    }
 	 
 
-		//Vérifications
+	//Vérifications
 	
 	public byte[] tag9Content(DataOutputStream out, int ErrorTag, byte[] correctedData) throws org.apache.commons.codec.DecoderException, IOException {
 			// A TESTER
@@ -190,11 +190,12 @@ public class Interaction {
 		byte [] currentState = tag7call(block.getLevel(),out, in);
 		State state = new State();
 		state.extractState(currentState);
-
+		
 		//TimeStamp
 		byte[] correctPredecessorTimestamp = state.getPredecessorTimestamp();
 		long differenceTimestampsInSeconds = util.toLong(block.getTimeStampBytes())-util.toLong(correctPredecessorTimestamp);
 		System.out.println("difference timestamp : "+differenceTimestampsInSeconds);
+
 		//Operations
 		ListOperations lop = new ListOperations();
 	    lop.extractAllOperations(tag5call(block.getLevel(),out, in));
@@ -235,6 +236,8 @@ public class Interaction {
 		} else {
 			System.err.println("no error on this block");
 		}
+
+		System.out.println("My account = "+state.getAccount("b8b606dba2410e1f3c3486e0d548a3053ba3f907860fada6fab2835fb27b3f21").toString());
 	 }
 
 	public boolean verifySignature(Block block, State state, DataOutputStream out, DataInputStream in) throws InvalidKeyException, SignatureException, InvalidKeySpecException, NoSuchAlgorithmException, IOException, org.apache.commons.codec.DecoderException{

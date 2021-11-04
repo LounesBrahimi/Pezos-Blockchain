@@ -17,16 +17,17 @@ public class IterationLoop {
 		this.out = connection.getOut();
 		this.in  = connection.getIn();
 		Utils util = new Utils();
+		byte[] timestampLastReceivedBroadcast = null;
 		
 		while(true) {
 			////// 4th message = tag 1
-			byte[] msg = { (byte)0x00, (byte)0x01 };
-			msg = util.to2BytesArray(1);
-			util.sendToSocket (msg,out,"tag 1");
+			util.sendToSocket (util.to2BytesArray(1),out,"tag 1");
 
 			////// 5th message = block
-			byte[] blockAsBytes = util.getFromSocket(174,in,"block"); // receivedMessage = 174 bytes = 2 tag + 172 block, no size 2 bytes
-			Block blockAsObjet = new Block(blockAsBytes);
+			byte[] broadcastedBlockAsBytes = util.getFromSocket(174,in,"block"); // receivedMessage = 174 bytes = 2 tag + 172 block, no size 2 bytes
+			Block blockAsObjet = new Block(broadcastedBlockAsBytes);
+			//timestampLastReceivedBroadcast = ;
+
 			System.out.println("#### ici 2 ######");
 			System.out.println("#print the block in loop#\n"+blockAsObjet);
 			System.out.println("#### ici 3s ######");

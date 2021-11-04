@@ -2,6 +2,8 @@ package state;
 
 import java.util.Arrays;
 
+import org.apache.commons.codec.DecoderException;
+
 import tools.Utils;
 
 public class State {
@@ -45,5 +47,11 @@ public class State {
 
 	public byte[] getPredecessorTimestamp(){
 		return this.predecessor_timestamp;
+	}
+	
+	public Account getAccount(String pk) throws DecoderException {
+		ListAccounts listAccounts = new ListAccounts();
+		listAccounts.extractAllAccounts(this.accountsBytes);
+		return listAccounts.getAccount(pk);
 	}
 }
