@@ -1,10 +1,9 @@
 # Pezos-Blockchain
 
+title: "Pezos Blockchain"
 
-% title Pezos Blockchain
 
-
-% authors Anna Kostrikova;Lounes Brahimi;Yohann Bernard
+author: "Anna Kostrikova;Lounes Brahimi;Yohann Bernard"
 
 
 ## Sujet :
