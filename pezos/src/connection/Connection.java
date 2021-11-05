@@ -25,9 +25,8 @@ import state.State;
 import tools.Utils;
 
 /*
- * Communication with the server
+ * class permettant la connection, la déconnection et la communication avec le serveur server
  * */
-
 public class Connection {
 	
 	private DataOutputStream out;
@@ -46,20 +45,21 @@ public class Connection {
 			// recupere le 1er message : seed
 			byte[] seed = util.getFromSocket(24,this.in,"seed"); 
 
-			// envoie la clï¿½ public : pk
+			// envoie la clee public : pk
 			util.sendToSocket (pkString,this.out,"pk");
 
-			// envoie du 3eme message "la graine hashï¿½ et signï¿½"
+			// envoie du 3 eme message "la graine hashee et signee"
 			byte[] hashSeed = util.hash(seed, 32);
 			byte[] signature = util.signature(hashSeed, skString);
 			util.sendToSocket(signature,this.out,"signature");
-			
 		} 
-
+	
+	/*
+	 * Methode permettant l'interraction manuelle
+	 * */
 	public void manualInteraction (String pkString, String skString) throws org.bouncycastle.util.encoders.DecoderException, IOException, DecoderException, InvalidKeyException, DataLengthException, SignatureException, InvalidKeySpecException, NoSuchAlgorithmException, CryptoException{
 		Utils util = new Utils();
 		Interaction inter = new Interaction();
-
 			Scanner myObj = new Scanner(System.in);
 			System.out.println("Donnez le tag : ");
 		    int tag = myObj.nextInt();
@@ -98,16 +98,17 @@ public class Connection {
 		return in;
 	}
 	
+	/*
+	 * Fermeture de la connection avec le serveur
+	 * */
 	public void closeConnection() throws IOException {
 		this.in.close();
 		this.out.close();
 		Runtime.getRuntime().addShutdownHook(new Thread(){public void run(){
 	    try {
 	        socket.close();
-	        System.out.println("The server is shut down!");
+	        System.out.println("End! : The server is shuted down!");
 	    } catch (IOException e) {  }
 		}});
 	}
-	
-	
 }

@@ -6,6 +6,9 @@ import java.util.Arrays;
 
 import tools.Utils;
 
+/*
+ * Class representant une operation particuliere
+ * */
 public class Operation {
 	private byte[] pubkey;
 	private byte[] signature;
@@ -18,6 +21,10 @@ public class Operation {
 		this.util = new Utils();
 	}
 	
+	/*
+	 * Methode qui extrait les donnees d'un tableau de bytes pour constituer l'objet operation correspendant
+	 * Cette derniere est appelee pour la premiere operation
+	 * */
 	public void extractFirstOperation(byte[] receivedOperation){
 		this.tagOperation = Arrays.copyOfRange(receivedOperation,0,2);
 		if ((typeOfTag() == 1) || (typeOfTag() == 3) || (typeOfTag() == 4)) {
@@ -49,6 +56,10 @@ public class Operation {
 		}
 	}
 	
+	/*
+	 * Methode qui extrait les donnees d'un tableau de bytes pour constituer l'objet operation correspendant
+	 * Cette derniere n'est pas appelee pour la premiere operation
+	 * */
 	public void extractOperation(byte[] receivedOperation) {
 		this.tagOperation = Arrays.copyOfRange(receivedOperation,0,2);
 		if ((typeOfTag() == 1) || (typeOfTag() == 3) || (typeOfTag() == 4)) {
@@ -92,6 +103,9 @@ public class Operation {
 		return util.to8BytesArray(this.time);
 	}
 	
+	/*
+	 * Methode qui encode un objet operation en un tableau de byte et le retourne
+	 * */
 	public byte[] getContent() throws IOException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		outputStream.write(this.tagOperation);

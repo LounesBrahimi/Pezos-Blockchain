@@ -3,6 +3,9 @@ package operations;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/*
+ * Class representant la liste des operationss
+ * */
 public class ListOperations {
 
 	private ArrayList<Operation> operations;
@@ -11,6 +14,11 @@ public class ListOperations {
 		operations = new ArrayList<Operation>();
 	}
 	
+	/*
+	 * Methode permettant d'extraire toutes les operations sous format "d'un objet Operation" 
+	 * et d'en constituer une liste 
+	 * (methode principale d'extraction d'operations)
+	 * */
 	public void extractAllOperations(byte[] receivedOperation) {
 		Operation op = new Operation();
 		op.extractFirstOperation(receivedOperation);
@@ -30,7 +38,11 @@ public class ListOperations {
 		}
 	}
 	
-	public void extractAllOperationRec(byte[] receivedOperation) {
+	/*
+	 * Methode secondaire d'extraction d'operations appelee par la principale, cette derniere de façon
+	 * recurcive extrait toute les operations en integralitee
+	 * */
+	private void extractAllOperationRec(byte[] receivedOperation) {
 		Operation op = new Operation();
 		op.extractOperation(receivedOperation);
 		operations.add(op);

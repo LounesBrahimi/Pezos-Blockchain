@@ -4,6 +4,9 @@ import java.util.Arrays;
 
 import tools.Utils;
 
+/*
+ * Class representant un compte dans la blockchaines
+ * */
 public class Account {
 	
 	private byte[] userPubkey;
@@ -25,13 +28,6 @@ public class Account {
 		this.operationsHashPez = Arrays.copyOfRange(accountsBytes,40,44);
 		this.contextHashPez = Arrays.copyOfRange(accountsBytes,44,48);
 		this.signaturePez = Arrays.copyOfRange(accountsBytes,48,52);
-		/*System.out.println("### Account ###");
-		System.out.println("userPubkey : "+ util.toHexString(userPubkey));
-		System.out.println("predPez : "+ util.toHexString(predPez));
-		System.out.println("timestampPez : "+ util.toHexString(timestampPez));
-		System.out.println("operationsHashPez : "+ util.toHexString(operationsHashPez));
-		System.out.println("contextHashPez : "+ util.toHexString(contextHashPez));
-		System.out.println("signaturePez : "+ util.toHexString(signaturePez));*/
 	}
 
 	public String toString() {

@@ -23,6 +23,9 @@ import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
 import org.bouncycastle.crypto.signers.Ed25519Signer;
 import org.bouncycastle.crypto.*;
 
+/*
+ * Class contenant des methodes outils utilisees dans plusieurs classes
+ * */
 public class Utils {
 	
 	public Utils() {

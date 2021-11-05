@@ -7,6 +7,9 @@ import org.apache.commons.codec.DecoderException;
 
 import tools.Utils;
 
+/*
+ * Class contenant la liste des comptes
+ * */
 public class ListAccounts {
 
 	private ArrayList<Account> listAccounts;
@@ -34,6 +37,5 @@ public class ListAccounts {
 		  if(Arrays.equals(account.getUserPubkey(),util.toBytesArray(pk)))
 			return account;
 		return null;
-	  } 
-	  
+	  }  
 }

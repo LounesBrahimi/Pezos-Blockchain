@@ -6,6 +6,9 @@ import org.apache.commons.codec.DecoderException;
 
 import tools.Utils;
 
+/*
+ * Class representant un etat
+ * */
 public class State {
 
 	private byte[] stateData;
@@ -33,8 +36,6 @@ public class State {
 		stateData = Arrays.copyOfRange(receivedMessage,2,receivedMessage.length);
 		System.out.println("dictat_pubk : "+ util.toHexString(dictateurPubkey));
 		System.out.println("predecessor_timestamp : "+ util.toHexString(predecessor_timestamp));
-		//System.out.println("nbBytesInNextSequence : "+ util.toHexString(nbBytesInNextSequence));
-		//System.out.println("accountsBytes : "+ util.toHexString(accountsBytes));
 	}
 	
 	public byte[] hashTheState() {

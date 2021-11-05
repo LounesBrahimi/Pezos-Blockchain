@@ -6,8 +6,12 @@ import java.util.ArrayList;
 
 import tools.Utils;
 
+/*
+ * class permettant de hasher la liste des operations
+ * */
 public class HachOfOperations {
 	
+	// liste des operations communiquee de la part du serveur
 	private ArrayList<Operation> operations;
 	private Utils util;
 	
@@ -21,6 +25,10 @@ public class HachOfOperations {
 		util = new Utils();
 	}
 	
+	/*
+	 * Methode permettant de hasher la liste des operation et de renvoyer le resultat sous forme
+	 * d'un tableau de bytes
+	 * */
 	public byte[] ops_hash() throws IOException {
 		if (this.operations.size() == 0) {
 			return util.Bytes32s();
