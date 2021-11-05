@@ -55,7 +55,7 @@ public class Utils {
 			}
 			return  result2;
 		}
-		System.out.println("*** SOCKET "+comment+" get: ["+toHexString(Arrays.copyOfRange(result,0,2))+"]"+toHexString(Arrays.copyOfRange(result,2,result.length))); 
+		//System.out.println(comment+" get: ["+toHexString(Arrays.copyOfRange(result,0,2))+"]"+toHexString(Arrays.copyOfRange(result,2,result.length))); 
 		return result;
 	}	
 	
@@ -98,7 +98,7 @@ public class Utils {
 		bytesArrayToSend = outputStream.toByteArray(); 
 		out.write(bytesArrayToSend); 
 		out.flush(); // binome !
-		System.out.println("*** SOCKET "+(comment==""?"":comment+" ")+"sent: ("+toHexString(Arrays.copyOfRange(bytesArrayToSend,0,2))+")["+toHexString(Arrays.copyOfRange(bytesArrayToSend,2,4))+"]"+toHexString(Arrays.copyOfRange(bytesArrayToSend,4,bytesArrayToSend.length)));
+		System.out.println(comment==""?"":comment+" "+"sent: ("+toHexString(Arrays.copyOfRange(bytesArrayToSend,0,2))+")["+toHexString(Arrays.copyOfRange(bytesArrayToSend,2,4))+"]"+toHexString(Arrays.copyOfRange(bytesArrayToSend,4,bytesArrayToSend.length)));
 	}
 	
 	/*

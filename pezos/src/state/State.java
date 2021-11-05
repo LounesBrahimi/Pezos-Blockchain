@@ -25,7 +25,6 @@ public class State {
 	}
 	
 	public void extractState(byte[] receivedMessage) {
-		System.out.println("****************** extractState("+util.toHexString(receivedMessage)+")");
 		this.tag = Arrays.copyOfRange(receivedMessage,0,2);
 		this.dictateurPubkey = Arrays.copyOfRange(receivedMessage,2,34);
 		this.predecessor_timestamp = Arrays.copyOfRange(receivedMessage,34,42);

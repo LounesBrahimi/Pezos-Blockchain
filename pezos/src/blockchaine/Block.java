@@ -84,6 +84,10 @@ public class Block {
 		return util.toLong(timestamp);
 	}
 
+	public void setTimeStamp(byte[] newTimeStamp){
+		this.timestamp = newTimeStamp;
+	}
+
 	public byte[] getTimeStampBytes(){
 		return this.timestamp;
 	}

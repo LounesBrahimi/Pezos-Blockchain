@@ -16,15 +16,15 @@ public class ListOperations {
 		op.extractFirstOperation(receivedOperation);
 		operations.add(op);
 		if ((op.typeOfTag() == 1) || (op.typeOfTag() == 3) || (op.typeOfTag() == 4)) {
-			receivedOperation = Arrays.copyOfRange(receivedOperation,134,receivedOperation.length);
+			receivedOperation = Arrays.copyOfRange(receivedOperation,130,receivedOperation.length);
 			if (receivedOperation.length >= 98)
 			extractAllOperationRec(receivedOperation);
 		} else if (op.typeOfTag() == 2){
-			receivedOperation = Arrays.copyOfRange(receivedOperation,110,receivedOperation.length);
+			receivedOperation = Arrays.copyOfRange(receivedOperation,106,receivedOperation.length);
 			if (receivedOperation.length >= 98)
 			extractAllOperationRec(receivedOperation);
 		} else if (op.typeOfTag() == 5) {
-			receivedOperation = Arrays.copyOfRange(receivedOperation,102,receivedOperation.length);
+			receivedOperation = Arrays.copyOfRange(receivedOperation,98,receivedOperation.length);
 			if (receivedOperation.length >= 98)
 			extractAllOperationRec(receivedOperation);
 		}

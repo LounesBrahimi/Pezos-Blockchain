@@ -20,19 +20,19 @@ public class IterationLoop {
 	private DataOutputStream out;
 	private DataInputStream  in;
 
-	public IterationLoop(Connection connection, String pkString, String skString) throws IOException, DecoderException, InterruptedException, InvalidKeyException, DataLengthException, SignatureException, InvalidKeySpecException, NoSuchAlgorithmException, CryptoException {
+	public IterationLoop(Connection connection, String pkString, String skString, int temps) throws IOException, DecoderException, InterruptedException, InvalidKeyException, DataLengthException, SignatureException, InvalidKeySpecException, NoSuchAlgorithmException, CryptoException {
 		this.out = connection.getOut();
 		this.in  = connection.getIn();
 		Utils util = new Utils();
 		long timestampLastReceptionBroadcast = 0;
 		long secondsBeforeNextbroadcast = 0;
 		Block lastBroadcastedBlock = null;
-		Block previousBroadcastedBlock = null;
+		
+		
+		util.sendToSocket (util.to2BytesArray(1),out,"tag 1");
+		////// 4th message = tag 1
 		
 		while(true) {
-			////// 4th message = tag 1
-			util.sendToSocket (util.to2BytesArray(1),out,"tag 1");
-			lastBroadcastedBlock = null;
 			////// 5th message = block
 			byte[] lastBroadcastedBlockAsBytes = util.getFromSocket(174,in,"block"); // 174 bytes = 2 tag + 172 block
 			lastBroadcastedBlock = new Block(lastBroadcastedBlockAsBytes);
@@ -42,12 +42,7 @@ public class IterationLoop {
 			(new Interaction()).verifyErrors(lastBroadcastedBlock,out,in,pkString,skString);
 			
 			////// timing
-			timestampLastReceptionBroadcast = util.currentDateTimeAsSeconds();
-			System.out.println("timestampLastReceivedBroadcast = "+util.toDateAsString(timestampLastReceptionBroadcast));
-			secondsBeforeNextbroadcast = 600 - (timestampLastReceptionBroadcast-lastBroadcastedBlock.getTimeStamp());
-			System.out.println("secondsBeforeNextbroadcast = "+secondsBeforeNextbroadcast);
-			//TimeUnit.SECONDS.sleep(secondsBeforeNextbroadcast+2);
-			TimeUnit.SECONDS.sleep(600);
+			TimeUnit.SECONDS.sleep((temps*60)+2);
 		}
 	}
 }

@@ -31,8 +31,9 @@ public class ListAccounts {
 	
 	public Account getAccount(String pk) throws DecoderException {
 		for(Account account: listAccounts)
-			if(Arrays.equals(account.getUserPubkey(),util.toBytesArray(pk)))
-				return account;
+		  if(Arrays.equals(account.getUserPubkey(),util.toBytesArray(pk)))
+			return account;
 		return null;
-	}
+	  } 
+	  
 }

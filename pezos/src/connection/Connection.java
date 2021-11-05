@@ -10,9 +10,18 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Scanner;
+
 import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DataLengthException;
+
+import blockchaine.Block;
+import operations.HachOfOperations;
+import operations.ListOperations;
+import repl.Interaction;
+import state.ListAccounts;
+import state.State;
 import tools.Utils;
 
 /*
@@ -23,10 +32,12 @@ public class Connection {
 	
 	private DataOutputStream out;
 	private DataInputStream  in;
+	private Socket socket;
 	
 	public Connection(String hostname, int port, String pkString, String skString) throws UnknownHostException, IOException, DecoderException, DataLengthException, CryptoException, InterruptedException, SignatureException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException {
 	
 			Socket socket = new Socket(hostname, port); 
+			this.socket = socket;
 			this.in	 = new DataInputStream (new BufferedInputStream (socket.getInputStream ()));
 			this.out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 			
@@ -43,9 +54,11 @@ public class Connection {
 			byte[] signature = util.signature(hashSeed, skString);
 			util.sendToSocket(signature,this.out,"signature");
 			
-			// interaction avec l'utilisateur ( REPL 
-/*
-			Interaction inter = new Interaction();
+		} 
+
+	public void manualInteraction (String pkString, String skString) throws org.bouncycastle.util.encoders.DecoderException, IOException, DecoderException, InvalidKeyException, DataLengthException, SignatureException, InvalidKeySpecException, NoSuchAlgorithmException, CryptoException{
+		Utils util = new Utils();
+		Interaction inter = new Interaction();
 
 			Scanner myObj = new Scanner(System.in);
 			System.out.println("Donnez le tag : ");
@@ -73,15 +86,9 @@ public class Connection {
 
 		    	ListAccounts lAccounts = new ListAccounts();
 		    	lAccounts.extractAllAccounts(state.getAccountsBytes());
-		    	//---------------------------------
-				// "Verification de la signature marche ok !"
-		    	
-		    	//---------------------------------
 		    }
 			myObj.close();
-			//this.closeConnection(socket);
-*/
-		} 
+	}
 
 	public DataOutputStream getOut() {
 		return out;
@@ -91,7 +98,7 @@ public class Connection {
 		return in;
 	}
 	
-	public void closeConnection(Socket socket) throws IOException {
+	public void closeConnection() throws IOException {
 		this.in.close();
 		this.out.close();
 		Runtime.getRuntime().addShutdownHook(new Thread(){public void run(){

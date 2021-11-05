@@ -4,6 +4,7 @@ package repl;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Scanner;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -38,6 +39,19 @@ public class Interaction {
 		this.util = new Utils();
 	}
 	
+	public byte[] concatTwoArrays(byte[] a, byte[] b) {
+		int sizeA = a.length;
+		int sizeB = b.length;
+		byte[] res = new byte[sizeA + sizeB];
+		for (int i = 0; i < a.length; i++) {
+			res[i] = a[i];
+		}
+		for (int i = a.length, j = 0; j < b.length && i  < res.length; i++, j++) {
+			res[i] = b[j];
+		}
+		return res;
+	}
+	
 	public byte[] tag3call(DataOutputStream out, DataInputStream  in) throws org.apache.commons.codec.DecoderException, IOException {
 		Scanner myObj = new Scanner(System.in);
 		System.out.println("Donnez le level souhait� : ");
@@ -46,7 +60,7 @@ public class Interaction {
 	    
 	    // communication avec le serveur
         byte[] msg = util.to2BytesArray(3);
-        msg = util.concatTwoArrays(msg, levelBytes);
+        msg = concatTwoArrays(msg, levelBytes);
         util.sendToSocket(msg,out,"tag 3");
         byte[] blockAsBytes3 = util.getFromSocket(174,in,"block");
 		myObj.close();
@@ -58,7 +72,7 @@ public class Interaction {
 	    
 	    // communication avec le serveur
         byte[] msg = util.to2BytesArray(3);
-        msg = util.concatTwoArrays(msg, levelBytes);
+        msg = concatTwoArrays(msg, levelBytes);
         util.sendToSocket(msg,out,"tag 3");
         byte[] blockAsBytes3 = util.getFromSocket(174,in,"block");
         return blockAsBytes3;
@@ -72,10 +86,19 @@ public class Interaction {
 	    
 	    // communication avec le serveur
         byte[] msg = util.to2BytesArray(5);
-        msg = util.concatTwoArrays(msg, levelBytes);
+        msg = concatTwoArrays(msg, levelBytes);
         util.sendToSocket(msg,out,"tag 5");
-        myObj.close();
-        return util.getFromSocket(10000,in,"block");
+
+		myObj.close();
+
+		 //extraction des 4 premiers bytes réponse (le tag et la taille des opérations)
+		byte[] tag = util.getFromSocket(2,in,"tag retour 6");
+		byte[] tailleOperations = util.getFromSocket(2, in, "taille des opérations du bloc souhaité");
+		int tailleOP = new BigInteger(tailleOperations).intValue();
+ 
+		 //retour de la valeur
+		 return util.getFromSocket(tailleOP,in,"operations");
+       
 	}
 
 	public byte[] tag5call(int level, DataOutputStream out, DataInputStream  in) throws org.apache.commons.codec.DecoderException, IOException {
@@ -83,10 +106,15 @@ public class Interaction {
 	    
 	    // communication avec le serveur
         byte[] msg = util.to2BytesArray(5);
-        msg = util.concatTwoArrays(msg, levelBytes);
+        msg = concatTwoArrays(msg, levelBytes);
         util.sendToSocket(msg,out,"tag 5");
-        
-        return util.getFromSocket(10000,in,"block");
+
+		byte[] tag = util.getFromSocket(2,in,"tag retour 6");
+		byte[] tailleOperations = util.getFromSocket(2, in, "taille des opérations du bloc souhaité");
+		int tailleOP = new BigInteger(tailleOperations).intValue();
+ 
+		 //retour de la valeur
+		return util.getFromSocket(tailleOP,in,"operations");
 	}
 	
 	public byte[] tag7call(DataOutputStream out, DataInputStream  in) throws org.apache.commons.codec.DecoderException, IOException {
@@ -97,10 +125,22 @@ public class Interaction {
 	    
 	    // communication avec le serveur
         byte[] msg = util.to2BytesArray(7);
-        msg = util.concatTwoArrays(msg, levelBytes);
+        msg = concatTwoArrays(msg, levelBytes);
         util.sendToSocket(msg,out,"tag 7");
 		myObj.close();
-        return util.getFromSocket(1000,in,"block");
+
+		
+		//extraction des premiers bytes réponse (le tag, clé publique du Dictateur, timestamp du prédécesseur, et la taille de la séquence d'état)
+		byte[] infos = util.getFromSocket(42, in, "tag+dictatorKey+predTimeStamp");
+
+		//on récupère la taille séparément pour extraire la taille qu'il nous faut
+        byte[] tailleAccounts = util.getFromSocket(4, in, "taille de la séquence des comptes");
+		infos = concatTwoArrays(infos, tailleAccounts);
+
+        int tailleSequenceComptes = new BigInteger(tailleAccounts).intValue();
+
+        System.out.println("taille : "+tailleSequenceComptes);
+        return concatTwoArrays(infos, util.getFromSocket(tailleSequenceComptes,in,"accounts"));
 	}
 
 	public byte[] tag7call(int level, DataOutputStream out, DataInputStream  in) throws org.apache.commons.codec.DecoderException, IOException {
@@ -108,9 +148,21 @@ public class Interaction {
 	    
 	    // communication avec le serveur
         byte[] msg = util.to2BytesArray(7);
-        msg = util.concatTwoArrays(msg, levelBytes);
+        msg = concatTwoArrays(msg, levelBytes);
         util.sendToSocket(msg,out,"tag 7");
-        return util.getFromSocket(1000,in,"block");
+
+		//extraction des premiers bytes réponse (le tag, clé publique du Dictateur, timestamp du prédécesseur, et la taille de la séquence d'état)
+		byte[] infos = util.getFromSocket(42, in, "tag+dictatorKey+predTimeStamp");
+
+		//on récupère la taille séparément pour extraire la taille qu'il nous faut
+        byte[] tailleAccounts = util.getFromSocket(4, in, "taille de la séquence des comptes");
+		infos = concatTwoArrays(infos, tailleAccounts);
+
+        int tailleSequenceComptes = new BigInteger(tailleAccounts).intValue();
+
+        System.out.println("taille : "+tailleSequenceComptes);
+        return concatTwoArrays(infos, util.getFromSocket(tailleSequenceComptes,in,"accounts"));
+
 	}
 	
 	public byte[] tagCall (int tag, DataOutputStream out, DataInputStream  in) throws IOException, DecoderException, org.apache.commons.codec.DecoderException{
@@ -135,16 +187,13 @@ public class Interaction {
 	//Vérifications
 	
 	public byte[] tag9Content(DataOutputStream out, int ErrorTag, byte[] correctedData) throws org.apache.commons.codec.DecoderException, IOException {
-			// A TESTER
-			//byte[] msg = util.to2BytesArray(9);
 			byte[] msg = util.to2BytesArray(ErrorTag);
-			msg = util.concatTwoArrays(msg, correctedData);
+			msg = concatTwoArrays(msg, correctedData);
 			return msg;
 		}
 
 	//Version pour la signature
 	public byte[] tag9ContentSign(DataOutputStream out, int ErrorTag){
-		//byte[] msg = util.to2BytesArray(9);
 		byte [] msg = util.to2BytesArray(ErrorTag);
 		return msg;
 	}
@@ -153,14 +202,14 @@ public class Interaction {
 		byte[] pkBytes = util.toBytesArray(pk);
 
 		// Création de la signature
-		byte[] signature = util.signature(util.hash(util.concatTwoArrays(content, pkBytes),32), sk);
+		byte[] signature = util.signature(util.hash(concatTwoArrays(content, pkBytes),32), sk);
 
 		// Ajout de la clé publique
-		content = util.concatTwoArrays(content,pkBytes);
+		content = concatTwoArrays(content,pkBytes);
 
 		// ajout de la signature
-		content = util.concatTwoArrays(content, signature);
-		content = util.concatTwoArrays(util.to2BytesArray(9), content);
+		content = concatTwoArrays(content, signature);
+		content = concatTwoArrays(util.to2BytesArray(9), content);
 
 		//envoi du message "Content+publicKey+Signature"
 		util.sendToSocket(content, out);
@@ -168,26 +217,21 @@ public class Interaction {
 
 
 	public void verifyErrors( Block block, DataOutputStream out, DataInputStream in, String pk, String sk) throws IOException, org.apache.commons.codec.DecoderException, InvalidKeyException, SignatureException, InvalidKeySpecException, NoSuchAlgorithmException, DataLengthException, CryptoException{
-		System.out.println("******************************* verifyErrors\n"+block.toString()+"\n**********************************");
 		byte[] operationContent = null;
-		//Predecessor
 		Block predecessor = new Block(tag3call(block.getLevel()-1, out, in));
-
+		
 		//Etat
 		byte [] currentState = tag7call(block.getLevel(),out, in);
 		State state = new State();
 		state.extractState(currentState);
-		
+
 		//TimeStamp
 		byte[] correctPredecessorTimestamp = state.getPredecessorTimestamp();
 		long differenceTimestampsInSeconds = util.toLong(block.getTimeStampBytes())-util.toLong(correctPredecessorTimestamp);
-		System.out.println("difference timestamp : "+differenceTimestampsInSeconds);
-
 		//Operations
 		ListOperations lop = new ListOperations();
 	    lop.extractAllOperations(tag5call(block.getLevel(),out, in));
 	    HachOfOperations hashOps = new HachOfOperations(lop.getListOperations());
-		System.out.println("******************************* hashOps = \n"+hashOps.toString());
 	    byte[] hashDesOperations = hashOps.ops_hash();
 		
 		//VerifPred
@@ -198,8 +242,9 @@ public class Interaction {
 		//VerifTimeStamp
 		if(differenceTimestampsInSeconds != 600){
 			System.out.println("======\n #Verification TimeStamp :# false \n======");
-			long correctedTimestamp = util.toLong(correctPredecessorTimestamp) + 600;
-			operationContent = tag9Content(out, 2, util.to8BytesArray(correctedTimestamp));
+			long correctedTimeStamp = util.toLong(correctPredecessorTimestamp) + 600;
+			operationContent = tag9Content(out, 2, util.to8BytesArray(correctedTimeStamp));
+			block.setTimeStamp(util.to8BytesArray(correctedTimeStamp));
 		}
 		//VerifOperations
 		if(!Arrays.areEqual(block.getOperationsHash(), hashDesOperations)){
@@ -219,12 +264,12 @@ public class Interaction {
 
 		//Si on a trouvé une erreur, on envoie le tag 9 de correction
 		if(operationContent != null){
-			System.out.println("oui");
 		    tag9Call(operationContent, pk, sk, out);
 		} else {
 			System.err.println("no error on this block");
 		}
 
+		//affichage de notre état
 		System.out.println("My account = "+state.getAccount("b8b606dba2410e1f3c3486e0d548a3053ba3f907860fada6fab2835fb27b3f21").toString());
 	 }
 
