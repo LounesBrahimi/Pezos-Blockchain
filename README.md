@@ -1,5 +1,11 @@
 # Pezos-Blockchain
 
+---
+title: Pezos Blockchain
+author: Anna Kostrikova, Lounes Brahimi, Yohann Bernard
+date: today
+---
+
 ## Sujet :
 
 Pezos® est une blockchain gouvernée par un dictateur. Son algorithme de consensus est une preuve
