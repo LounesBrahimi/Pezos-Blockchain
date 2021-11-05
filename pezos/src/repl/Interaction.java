@@ -37,9 +37,11 @@ import tools.Utils;
 public class Interaction {
 
 	private Utils util;	
+	private int tempsCorrect;
 	
-	public Interaction() {
+	public Interaction(int tempsCorrect) {
 		this.util = new Utils();
+		this.tempsCorrect = tempsCorrect;
 	}
 	
 	/*
@@ -92,9 +94,9 @@ public class Interaction {
 			operationContent = tag9Content(out, 1, predecessor.getHashCurrentBlock());
 		}
 		//VerifTimeStamp
-		if(differenceTimestampsInSeconds != 600){
+		if(differenceTimestampsInSeconds != tempsCorrect){
 			System.out.println("======\n #Verification TimeStamp :# false \n======");
-			long correctedTimeStamp = util.toLong(correctPredecessorTimestamp) + 600;
+			long correctedTimeStamp = util.toLong(correctPredecessorTimestamp) + tempsCorrect;
 			operationContent = tag9Content(out, 2, util.to8BytesArray(correctedTimeStamp));
 			block.setTimeStamp(util.to8BytesArray(correctedTimeStamp));
 		}

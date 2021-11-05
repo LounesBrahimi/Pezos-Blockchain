@@ -25,7 +25,12 @@ public class Main {
 		String pk       = "b8b606dba2410e1f3c3486e0d548a3053ba3f907860fada6fab2835fb27b3f21"; // public
 		String sk       = "1f06949f1278fcbc0590991180d5b567d240c0b0576d1d34cad66db49d4eea4a"; // secret
 		
-		Connection connection = new Connection(hostname,port,pk,sk);
+		Scanner myObj1 = new Scanner(System.in);
+		System.out.println("Temps correct entre deux blocks en secondes?");
+	    int tempsCorrect = 0;
+	    tempsCorrect = myObj1.nextInt();
+	    Connection connection = new Connection(hostname,port,pk,sk, tempsCorrect);
+		
 		Scanner myObj = new Scanner(System.in);
 			System.out.println("Quel mode voulez-vous lancer? \n 1 - Broadcast Auto \n 2 - Manuel ");
 		    int choix = 0;
@@ -37,7 +42,7 @@ public class Main {
 			System.out.println("Quel est la durée \"en secondes\" d'attente pour un nouveau bloc ?");
 			int temps = 0;
 			temps = myObj2.nextInt();
-			new IterationLoop(connection, pk, sk, temps);
+			new IterationLoop(connection, pk, sk, temps, tempsCorrect);
 		}
 		if(choix == 2){
 			connection.manualInteraction(pk, sk);

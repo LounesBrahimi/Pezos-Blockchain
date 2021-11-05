@@ -32,9 +32,10 @@ public class Connection {
 	private DataOutputStream out;
 	private DataInputStream  in;
 	private Socket socket;
+	private int tempsCorrect;
 	
-	public Connection(String hostname, int port, String pkString, String skString) throws UnknownHostException, IOException, DecoderException, DataLengthException, CryptoException, InterruptedException, SignatureException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException {
-	
+	public Connection(String hostname, int port, String pkString, String skString, int tempsCorrect) throws UnknownHostException, IOException, DecoderException, DataLengthException, CryptoException, InterruptedException, SignatureException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException {
+			this.tempsCorrect = tempsCorrect;
 			Socket socket = new Socket(hostname, port); 
 			this.socket = socket;
 			this.in	 = new DataInputStream (new BufferedInputStream (socket.getInputStream ()));
@@ -59,7 +60,7 @@ public class Connection {
 	 * */
 	public void manualInteraction (String pkString, String skString) throws org.bouncycastle.util.encoders.DecoderException, IOException, DecoderException, InvalidKeyException, DataLengthException, SignatureException, InvalidKeySpecException, NoSuchAlgorithmException, CryptoException{
 		Utils util = new Utils();
-		Interaction inter = new Interaction();
+		Interaction inter = new Interaction(tempsCorrect);
 			Scanner myObj = new Scanner(System.in);
 			System.out.println("Donnez le tag : ");
 		    int tag = myObj.nextInt();

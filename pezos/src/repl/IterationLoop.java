@@ -21,10 +21,12 @@ import tools.Utils;
  * class Constituant le broadcast automatique
  * */
 public class IterationLoop {
+	private int tempsCorrect;
 	private DataOutputStream out;
 	private DataInputStream  in;
 
-	public IterationLoop(Connection connection, String pkString, String skString, int temps) throws IOException, DecoderException, InterruptedException, InvalidKeyException, DataLengthException, SignatureException, InvalidKeySpecException, NoSuchAlgorithmException, CryptoException {
+	public IterationLoop(Connection connection, String pkString, String skString, int temps, int tempsCorrect) throws IOException, DecoderException, InterruptedException, InvalidKeyException, DataLengthException, SignatureException, InvalidKeySpecException, NoSuchAlgorithmException, CryptoException {
+		this.tempsCorrect = tempsCorrect;
 		this.out = connection.getOut();
 		this.in  = connection.getIn();
 		Utils util = new Utils();
@@ -42,7 +44,7 @@ public class IterationLoop {
 			System.out.println("=======Block courant : =======\n"+lastBroadcastedBlock+"\n================");
 
 			// détéction de l'erreur et envoie du tag 9 pour la correction 
-			(new Interaction()).verifyErrors(lastBroadcastedBlock,out,in,pkString,skString);
+			(new Interaction(tempsCorrect)).verifyErrors(lastBroadcastedBlock,out,in,pkString,skString);
 			
 			// sleep selon le timing chosie
 			TimeUnit.SECONDS.sleep(temps+2);
