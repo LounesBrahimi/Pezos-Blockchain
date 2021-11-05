@@ -1,10 +1,11 @@
 # Pezos-Blockchain
 
----
+
 title: Pezos Blockchain
+
+
 author: Anna Kostrikova, Lounes Brahimi, Yohann Bernard
-date: today
----
+
 
 ## Sujet :
 
@@ -28,4 +29,6 @@ trop tard, elle sera ignorée par le réseau.
 Le but de ce projet est donc d’implanter un client de correction capable de se connecter au serveur
 Pezos®, écoutant les nouveaux blocs et détectant les erreurs pour proposer des corrections afin d’obtenir le
 maximum de pez.
+
+date: today
 
