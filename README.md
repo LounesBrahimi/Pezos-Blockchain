@@ -1,7 +1,12 @@
 # Pezos-Blockchain
 
-## Authors: Anna Kostrikova, Lounes Brahimi, Yohann Bernard
+## Execution :
 
+Pour exécuter le projet, il suffit de rentrer dans le dossier "pezos" puis de :
+
+1. ant build ====> Compile le projet.
+
+2. ant main  ====> Exécute le projet.
 
 ## Sujet :
 
@@ -25,3 +30,6 @@ trop tard, elle sera ignorée par le réseau.
 Le but de ce projet est donc d’implanter un client de correction capable de se connecter au serveur
 Pezos®, écoutant les nouveaux blocs et détectant les erreurs pour proposer des corrections afin d’obtenir le
 maximum de pez.
+
+
+## Authors: Anna Kostrikova, Lounes Brahimi, Yohann Bernard

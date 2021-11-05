@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="pezos">
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="15"/>
+    <property name="source" value="15"/>
+    <path id="pezos.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="jars/bcprov-jdk15on-1.69.jar"/>
+        <pathelement location="jars/checker-qual-3.8.0.jar"/>
+        <pathelement location="jars/commons-codec-1.15.jar"/>
+        <pathelement location="jars/error_prone_annotations-2.5.1.jar"/>
+        <pathelement location="jars/failureaccess-1.0.1.jar"/>
+        <pathelement location="jars/guava-30.1.1-jre.jar"/>
+        <pathelement location="jars/j2objc-annotations-1.3.jar"/>
+        <pathelement location="jars/jsr305-3.0.2.jar"/>
+        <pathelement location="jars/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar"/>
+        <pathelement location="jars/ove.blake2b-alpha.0.jar"/>
+    </path>
+    <path id="run.main.classpath">
+        <path refid="pezos.classpath"/>
+        <pathelement location="jars/bcprov-jdk15on-1.69.jar"/>
+        <pathelement location="jars/checker-qual-3.8.0.jar"/>
+        <pathelement location="jars/commons-codec-1.15.jar"/>
+        <pathelement location="jars/error_prone_annotations-2.5.1.jar"/>
+        <pathelement location="jars/failureaccess-1.0.1.jar"/>
+        <pathelement location="jars/guava-30.1.1-jre.jar"/>
+        <pathelement location="jars/j2objc-annotations-1.3.jar"/>
+        <pathelement location="jars/jsr305-3.0.2.jar"/>
+        <pathelement location="jars/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar"/>
+        <pathelement location="jars/ove.blake2b-alpha.0.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="pezos.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target name="main">
+        <java classname="pezos.Main" failonerror="true" fork="yes">
+            <classpath refid="run.main.classpath"/>
+        </java>
+    </target>
+</project>
