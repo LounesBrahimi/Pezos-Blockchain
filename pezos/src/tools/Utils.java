@@ -58,7 +58,6 @@ public class Utils {
 			}
 			return  result2;
 		}
-		//System.out.println(comment+" get: ["+toHexString(Arrays.copyOfRange(result,0,2))+"]"+toHexString(Arrays.copyOfRange(result,2,result.length))); 
 		return result;
 	}	
 	

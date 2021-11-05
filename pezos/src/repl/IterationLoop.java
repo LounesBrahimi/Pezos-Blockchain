@@ -45,7 +45,7 @@ public class IterationLoop {
 			(new Interaction()).verifyErrors(lastBroadcastedBlock,out,in,pkString,skString);
 			
 			// sleep selon le timing chosie
-			TimeUnit.SECONDS.sleep((temps*60)+2);
+			TimeUnit.SECONDS.sleep(temps+2);
 		}
 	}
 }

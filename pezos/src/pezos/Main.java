@@ -34,7 +34,7 @@ public class Main {
 		
 		if(choix == 1){
 			Scanner myObj2 = new Scanner(System.in);
-			System.out.println("Quel est la durée \"en minutes\" d'attente pour un nouveau bloc ?");
+			System.out.println("Quel est la durée \"en secondes\" d'attente pour un nouveau bloc ?");
 			int temps = 0;
 			temps = myObj2.nextInt();
 			new IterationLoop(connection, pk, sk, temps);
